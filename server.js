@@ -640,8 +640,9 @@ app.get("/api/streams/:episodeSlug", async (request, response) => {
 
 app.get("*", (_, response) => response.sendFile(path.join(__dirname, "public", "index.html")));
 if (require.main === module) {
-  const server = app.listen(PORT, "127.0.0.1", () => {
-    console.log(`ILoveNime personal: http://localhost:${PORT}`);
+  const host = process.env.HOST || "0.0.0.0";
+  const server = app.listen(PORT, host, () => {
+    console.log(`ILoveNime personal: http://${host === "0.0.0.0" ? "localhost" : host}:${PORT}`);
   });
 
   server.on("error", (error) => {
