@@ -1,0 +1,24 @@
+{
+  "name": "ilovenime-personal",
+  "version": "1.0.0",
+  "private": true,
+  "description": "Personal local ILoveNime anime tracker with an Animasu proxy.",
+  "main": "server.js",
+  "scripts": {
+    "start": "node server.js",
+    "dev": "node --watch server.js",
+    "test": "node --test test/*.test.js",
+    "test:integration": "node scripts/zip-route-integration.js",
+    "test:keys": "node scripts/search-key-audit.js",
+    "test:all": "npm test && npm run test:keys && npm run test:integration"
+  },
+  "dependencies": {
+    "animejs": "^4.5.0",
+    "axios": "^1.7.9",
+    "cheerio": "^1.0.0",
+    "cors": "^2.8.5",
+    "express": "^4.21.2",
+    "three": "^0.185.1",
+    "yaoi": "^1.0.7"
+  }
+}

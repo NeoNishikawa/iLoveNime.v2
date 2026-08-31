@@ -1,0 +1,33 @@
+@media (max-width: 1080px) {
+  .topbar { grid-template-columns: auto 1fr auto; gap: 18px; }
+  .main-nav { justify-content: center; margin-left: 0; }
+  .nav-search { grid-column: 1 / -1; grid-row: 2; display: none; padding-bottom: 12px; }
+  .topbar:has(.nav-search .is-nav) { padding-bottom: 10px; }
+  .topbar:has(.nav-search .is-nav) .main-nav { display: none; }
+  .topbar:has(.nav-search .is-nav) .nav-search { display: block; }
+  .hero { grid-template-columns: minmax(0, 1fr) minmax(330px, .72fr); gap: 30px; }
+  .catalog-grid { grid-template-columns: repeat(4, minmax(0, 1fr)); }
+  .detail-grid { grid-template-columns: 190px minmax(0, 1fr); }
+  .tracker-box { grid-column: 2; grid-row: 1; }
+  .episode-path { grid-column: 1 / -1; }
+  .collection-list { grid-template-columns: repeat(4, minmax(0, 1fr)); }
+}
+
+@media (max-width: 760px) {
+  .topbar, main { width: min(100% - 32px, var(--content)); }
+  .topbar { min-height: 67px; }
+  .brand b { width: 35px; height: 35px; border-radius: 10px; }.brand span { font-size: .9rem; }.brand small { font-size: .47rem; }
+  .main-nav { gap: 12px; }.main-nav a { font-size: .59rem; }.source-pill { display: none; }
+  .local-badge { padding: 7px 9px; font-size: .57rem; }.local-badge img { width: 12px; }
+  .hero { display: block; min-height: 0; padding: 62px 0 83px; }.hero::after { bottom: 27px; }.hero__copy { max-width: none; }.hero__eyebrow { margin-bottom: 22px; }.hero__season { display: none; }
+  h1 { font-size: clamp(4rem, 21vw, 6.5rem); }.lede { margin: 24px 0; font-size: .84rem; }.search-form { grid-template-columns: minmax(0, 1fr) auto; }.search-form input { padding: 11px 10px; font-size: .78rem; }.search-form button { min-height: 39px; padding: 0 13px; font-size: .59rem; }
+  .hero__scene { min-height: 380px; margin-top: 32px; }.hero__profile { right: 2%; width: min(100% - 10px, 360px); min-height: 345px; padding: 24px; }.hero__portrait-wrap { width: 150px; height: 150px; }.hero__profile-copy h2 { font-size: 1.45rem; }.hero__scene::before { width: 275px; height: 275px; }
+  .discover, .collection { padding: 42px 0 65px; }.section-bar { align-items: flex-start; flex-direction: column; gap: 17px; }.section-bar h2 { font-size: 2.75rem; }.result-meta { align-self: flex-end; }.result-meta b { font-size: 2rem; }.genre-strip { margin-right: -16px; padding-bottom: 18px; }
+  .catalog-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 10px; }.anime-card__copy { padding: 11px 11px 13px; }.anime-card__title { font-size: .8rem; }.anime-card__meta { font-size: .57rem; }
+  .slide-controls { justify-content: space-between; }.slide-controls--bottom { display: flex; margin-top: 18px; margin-bottom: 0; }.slide-controls--bottom + * { margin-top: 0; }
+  .detail { margin-bottom: 55px; padding: 17px; }.detail__rail { align-items: flex-start; font-size: .53rem; }.detail-grid { grid-template-columns: 112px minmax(0, 1fr); gap: 16px; }.detail-copy h3 { margin: 7px 0 11px; font-size: 1.7rem; }.synopsis { font-size: .74rem; line-height: 1.6; }.detail-meta { margin-top: 14px; font-size: .58rem; }.tags { margin-top: 12px; }.tags span { font-size: .51rem; }.detail-score { right: 6px; bottom: 6px; min-width: 39px; padding: 5px; font-size: .9rem; }.detail-score small { font-size: .39rem; }.tracker-box { grid-column: 1 / -1; grid-row: auto; }.episode-path { padding-top: 20px; }.episode-list { grid-template-columns: 1fr 1fr; max-height: 270px; }.episode-list button { grid-template-columns: 33px 1fr auto; padding: 9px 8px; }.episode-list small { font-size: .5rem; }.episode-title { font-size: .59rem; }
+  .collection-panel { padding: 17px; }.collection-stats { grid-template-columns: 1fr 1fr; }.stat { padding: 10px 7px; }.stat span { font-size: .5rem; }.collection-filter-bar { gap: 9px; margin-bottom: 15px; padding: 12px 0 14px; }.collection-filter-label { font-size: .51rem; }.collection-filters { gap: 6px; }.collection-filter { min-height: 30px; padding: 0 8px; font-size: .56rem; }.collection-filter span { min-width: 17px; height: 17px; font-size: .5rem; }.collection-list { grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 10px; }.saved-card__status { bottom: 8px; left: 9px; font-size: .49rem; }.saved-card__body { gap: 7px; padding: 11px 10px 9px; }.saved-card__title { font-size: .68rem; }.saved-card__progress { font-size: .53rem; }.saved-card__progress b { font-size: .51rem; }.saved-card__action { margin: 0 10px 10px; padding: 7px; font-size: .52rem; }
+  .player { padding: 15px; }.player__head { align-items: flex-start; }.player__head-actions { gap: 3px; }.player__body { display: flex; flex-direction: column; }.player-screen, .player-screen iframe { min-height: 53vw; }.mirror-panel { padding: 13px; }.player__title-line { align-items: flex-start; flex-direction: column; gap: 4px; }.player__title-line strong { font-size: .9rem; }.player-message { font-size: .59rem; }
+}
+
+@media (prefers-reduced-motion: reduce) { #motionField { display: none; } .hero__profile { animation: none; } }

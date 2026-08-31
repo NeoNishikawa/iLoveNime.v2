@@ -1,0 +1,71 @@
+<!doctype html>
+<html lang="id">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <meta name="theme-color" content="#151322" />
+  <title>ILoveNime — Personal Anime Console</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700;800&family=Space+Grotesk:wght@500;600;700&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="/css/tokens.css" />
+  <link rel="stylesheet" href="/css/layout.css" />
+  <link rel="stylesheet" href="/css/components.css" />
+  <link rel="stylesheet" href="/css/responsive.css" />
+  <link rel="stylesheet" href="/css/overrides.css" />
+</head>
+<body>
+  <canvas id="motionField" aria-hidden="true"></canvas>
+  <div class="ambient ambient--one" aria-hidden="true"></div>
+  <div class="ambient ambient--two" aria-hidden="true"></div>
+
+  <header class="topbar" id="top">
+    <a class="brand" href="#top" data-scroll aria-label="ILoveNime home"><b>ILN</b><span>ILoveNime<small>Hyouta's anime shelf</small></span></a>
+    <nav class="main-nav" aria-label="Main navigation"><a href="#discover" data-scroll>Discover</a><a href="#collection" data-scroll>My list</a><span class="source-pill" id="sourceStatus">System checking</span></nav>
+    <div class="nav-search" id="navSearch"></div>
+    <button class="local-badge" title="Tracking tersimpan hanya pada browser ini"><img src="/icons/user.svg" alt="" />Local</button>
+  </header>
+
+  <main id="app">
+    <section class="hero" id="hero">
+      <div class="hero__copy">
+        <div class="hero__eyebrow"><span class="eyebrow-dot"></span><p class="kicker">iLoveNime:</p><span class="hero__season">v2</span></div>
+        <h1>Find your<br /><span>next anime.</span></h1>
+        <p class="lede">Ruang personal untuk menemukan serial baru, menyusun progres, dan menonton episode favoritmu dengan nyaman.</p>
+        <div id="searchDock" class="search-dock"><form class="search-form" id="searchForm"><label for="searchInput">Search anime</label><input id="searchInput" autocomplete="off" placeholder="Ketik judul anime…" /><button type="submit">Search</button></form><p class="search-help">Ketik untuk mencari langsung — tidak perlu menekan Enter.</p></div>
+      </div>
+      <div class="hero__scene" id="heroScene">
+        <div class="hero__profile">
+          <div class="hero__profile-glow" aria-hidden="true"></div>
+          <div class="hero__portrait-wrap"><img class="hero__portrait" src="/assets/hyouta.jpg" alt="Hyouta" /></div>
+          <div class="hero__profile-copy"><p class="kicker">YOUR ANIME GUIDE</p><h2>Hi, I’m <span>Hyouta.</span></h2><p>Let’s find a story worth staying up for.</p><div class="hero__profile-tags"><span>CURATED</span><span>PERSONAL</span></div></div>
+          <span class="profile-spark spark--one" aria-hidden="true">✦</span><span class="profile-spark spark--two" aria-hidden="true">✧</span>
+        </div>
+      </div>
+    </section>
+
+    <section class="discover" id="discover">
+      <div class="section-bar"><div><p class="kicker">DISCOVERY / TODAY'S DROP</p><h2 id="resultsHeading">New <span>anime.</span></h2></div><div class="result-meta"><b id="resultCount">—</b><span>titles found</span></div></div>
+      <div class="genre-strip" id="genreStrip"><button class="genre-chip is-active" data-genre="">All</button></div>
+      <div class="catalog-state" id="catalogState">Memuat anime terbaru hari ini…</div>
+      <div class="slider hidden" id="slider"><div class="slide-controls"><button id="previousSlide" aria-label="Slide sebelumnya">←</button><span id="slideLabel">01 / 01</span><button id="nextSlide" aria-label="Slide berikutnya">→</button></div><div class="catalog-grid" id="catalogGrid" aria-live="polite"></div><div class="slide-controls slide-controls--bottom"><button id="previousSlideBottom" aria-label="Slide sebelumnya">←</button><span id="slideLabelBottom">01 / 01</span><button id="nextSlideBottom" aria-label="Slide berikutnya">→</button></div></div>
+    </section>
+
+    <section class="detail hidden" id="detail"><div class="detail__rail"><span>DETAIL / SELECTED TITLE</span><button id="closeDetail">Close detail ×</button></div><div class="detail__body" id="detailBody"></div></section>
+
+    <section class="collection" id="collection">
+      <div class="collection-panel">
+        <div class="section-bar"><div><p class="kicker">LOCAL STORAGE / YOUR SHELF</p><h2>Your <span>anime list.</span></h2><p class="section-note">Anime yang kamu simpan akan muncul di sini.</p></div><button class="clear-button" id="clearCollection">Clear local data</button></div>
+        <div class="collection-stats" id="collectionStats"></div>
+        <div id="collectionFilters"></div>
+        <div class="collection-list" id="collectionList"><p class="empty-state">Belum ada anime dalam list lokal.</p></div>
+      </div>
+    </section>
+  </main>
+
+  <dialog class="player" id="player"><div class="player__head"><div class="player__heading"><p class="kicker">System mirroring</p><div class="player__title-line"><strong id="playerTitle">Episode source</strong><span id="playerMessage" class="player-message" role="status" aria-live="polite">Menyiapkan mirror…</span></div></div><div class="player__head-actions"><button id="toggleFullscreen" class="fullscreen-button" type="button">Fullscreen ↗</button><button id="closePlayer">Close ×</button></div></div><div class="player__body"><div class="player-screen" id="playerScreen"><iframe id="playerFrame" title="Anime stream" sandbox="allow-scripts allow-same-origin allow-forms allow-presentation" allow="autoplay; fullscreen; picture-in-picture; encrypted-media" referrerpolicy="strict-origin-when-cross-origin" allowfullscreen></iframe></div><aside class="mirror-panel"><p class="kicker">AVAILABLE LINKS</p><div id="mirrorList"></div><button class="next-mirror" id="nextMirror">Try next mirror →</button><a class="open-mirror" id="openMirror" href="#" target="_blank" rel="noopener">Open mirror in new tab ↗</a><button class="next-episode" id="nextEpisode">Next episode →</button><p class="mirror-note" id="playerNote">Jika fullscreen provider tidak tersedia, pakai Fullscreen player atau buka mirror di tab baru.</p></aside></div></dialog>
+
+  <dialog class="confirm-dialog" id="clearDialog" aria-labelledby="clearDialogTitle"><div class="confirm-dialog__content"><p class="kicker">LOCAL STORAGE / CONFIRMATION</p><h2 id="clearDialogTitle">Clear local data?</h2><p>Semua status, progres, dan episode yang sudah ditonton akan dihapus dari browser ini.</p><div class="confirm-dialog__actions"><button id="cancelClear" class="dialog-secondary">Cancel</button><button id="confirmClear" class="dialog-danger">Clear data</button></div></div></dialog>
+  <script type="module" src="/js/app.js"></script>
+</body>
+</html>
