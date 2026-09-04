@@ -1,4 +1,5 @@
 const express = require("express");
+const compression = require("compression");
 const axios = require("axios");
 const cheerio = require("cheerio");
 const path = require("path");
@@ -23,7 +24,8 @@ const MAX_CACHE_ENTRIES = Number(process.env.MAX_CACHE_ENTRIES) > 0 ? Number(pro
 const SLIDE_SIZE = 20;
 const MAX_SEARCH_PAGES = Number(process.env.MAX_SEARCH_PAGES) > 0 ? Number(process.env.MAX_SEARCH_PAGES) : 20;
 const MIN_SEARCH_LENGTH = 2;
-const USER_TIME_ZONE = "Asia/Bangkok";
+// Changed: use the actual WIB timezone name while retaining the same UTC+7 behavior.
+const USER_TIME_ZONE = "Asia/Jakarta";
 const DAY_KEYS = ["minggu", "senin", "selasa", "rabu", "kamis", "jumat", "sabtu"];
 const TITLE_ALIASES_PATH = path.join(__dirname, "public", "data", "title-aliases.json");
 const BUILTIN_TITLE_ALIASES = { "that time i got reincarnated as a slime": ["Tensei shitara Slime Datta Ken"] };
@@ -518,6 +520,8 @@ async function yaoMirrors(episodeSlug, provider = "animasu", sourceUrl = "") {
   return collected.filter((stream) => stream.url && !seen.has(stream.url) && seen.add(stream.url));
 }
 
+// Changed: gzip JSON and other compressible responses to reduce bandwidth for slow connections.
+app.use(compression());
 app.use(express.json());
 app.use("/vendor/animejs", express.static(path.join(__dirname, "node_modules", "animejs", "dist", "bundles")));
 app.use("/vendor/three", express.static(path.join(__dirname, "node_modules", "three", "build")));
