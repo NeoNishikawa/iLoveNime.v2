@@ -133,3 +133,105 @@
 @media (pointer: coarse), (max-width: 720px) {
   .orbit-cursor { display: none; }
 }
+
+/* High-contrast 3D states: idle communicates movement, selectable communicates action. */
+.orbit-cursor {
+  perspective: 220px;
+  width: 50px;
+  height: 50px;
+  mix-blend-mode: normal;
+  transition: opacity .2s ease, width .22s var(--ease), height .22s var(--ease), filter .22s ease;
+}
+.orbit-cursor::after {
+  position: absolute;
+  right: -17px;
+  bottom: -16px;
+  padding: 3px 5px;
+  border: 1px solid rgba(245, 240, 232, .35);
+  border-radius: 4px;
+  color: var(--text);
+  background: rgba(9, 11, 18, .88);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, .35);
+  content: "MOVE";
+  font-family: "Space Grotesk", sans-serif;
+  font-size: .42rem;
+  font-weight: 800;
+  letter-spacing: .12em;
+  opacity: .88;
+  transform: translateZ(18px);
+  transition: color .2s ease, border-color .2s ease, background .2s ease, content .2s ease;
+}
+.orbit-cursor__core {
+  width: 10px;
+  height: 10px;
+  border: 2px solid #fff;
+  background: var(--coral);
+  box-shadow: 0 0 0 5px rgba(255, 118, 87, .22), 0 0 20px rgba(255, 118, 87, .75), 0 4px 8px rgba(0, 0, 0, .5);
+  transform: translate(-50%, -50%) translateZ(22px);
+  transition: background .2s ease, box-shadow .2s ease, transform .2s var(--ease);
+}
+.orbit-cursor__ring {
+  border-width: 2px;
+  filter: drop-shadow(0 3px 4px rgba(0, 0, 0, .45));
+  transition: border-color .2s ease, opacity .2s ease, transform .2s var(--ease), filter .2s ease;
+}
+.orbit-cursor__ring--a { width: 24px; height: 24px; border-color: #d8d5ff; }
+.orbit-cursor__ring--b { width: 37px; height: 37px; border-color: #a9fff2; }
+.orbit-cursor__ring--c { width: 50px; height: 50px; border-color: #ff9b84; }
+.orbit-cursor.is-selectable {
+  width: 64px;
+  height: 64px;
+  filter: drop-shadow(0 8px 16px rgba(255, 118, 87, .36));
+}
+.orbit-cursor.is-selectable::after {
+  right: -22px;
+  bottom: -19px;
+  border-color: var(--aqua);
+  color: var(--ink);
+  background: var(--aqua);
+  content: "SELECT";
+  opacity: 1;
+}
+.orbit-cursor.is-selectable .orbit-cursor__core {
+  width: 14px;
+  height: 14px;
+  border-color: var(--ink);
+  background: var(--aqua);
+  box-shadow: 0 0 0 6px rgba(144, 222, 212, .25), 0 0 24px rgba(144, 222, 212, .9), 0 5px 10px rgba(0, 0, 0, .55);
+  transform: translate(-50%, -50%) translateZ(30px) rotateX(12deg) rotateY(-12deg);
+}
+.orbit-cursor.is-selectable .orbit-cursor__ring--a {
+  border-color: #fff;
+  transform: translate(-50%, -50%) rotate(28deg) scaleY(.38) rotateX(24deg) rotateY(-18deg) translateZ(14px);
+}
+.orbit-cursor.is-selectable .orbit-cursor__ring--b {
+  border-color: var(--aqua);
+  transform: translate(-50%, -50%) rotate(-24deg) scaleY(.34) rotateX(-20deg) rotateY(22deg) translateZ(8px);
+}
+.orbit-cursor.is-selectable .orbit-cursor__ring--c {
+  border-color: var(--coral-soft);
+  transform: translate(-50%, -50%) rotate(65deg) scaleY(.28) rotateX(18deg) rotateY(25deg) translateZ(3px);
+}
+.orbit-cursor.is-pressed {
+  width: 74px;
+  height: 74px;
+  filter: drop-shadow(0 0 22px rgba(144, 222, 212, .75));
+}
+.orbit-cursor.is-pressed .orbit-cursor__core {
+  transform: translate(-50%, -50%) translateZ(38px) scale(.78);
+}
+.orbit-cursor.is-pressed::after { content: "CLICK"; }
+@keyframes orbit-cursor-idle-float {
+  0%, 100% { transform: translate(-50%, -50%) rotate(28deg) scaleY(.38) translateZ(0); }
+  50% { transform: translate(-50%, -50%) rotate(208deg) scaleY(.38) translateZ(9px); }
+}
+@keyframes orbit-cursor-select-float {
+  0%, 100% { transform: translate(-50%, -50%) rotate(28deg) scaleY(.38) rotateX(24deg) rotateY(-18deg) translateZ(14px); }
+  50% { transform: translate(-50%, -50%) rotate(208deg) scaleY(.38) rotateX(-24deg) rotateY(18deg) translateZ(26px); }
+}
+.orbit-cursor:not(.is-selectable) .orbit-cursor__ring--a { animation: orbit-cursor-idle-float 2.7s ease-in-out infinite; }
+.orbit-cursor.is-selectable .orbit-cursor__ring--a { animation: orbit-cursor-select-float 1.15s ease-in-out infinite; }
+@media (prefers-reduced-motion: reduce) {
+  .orbit-cursor__ring { animation: none !important; }
+  .orbit-cursor::after { transition: none; }
+}
