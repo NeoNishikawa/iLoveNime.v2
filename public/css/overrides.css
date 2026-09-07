@@ -11,3 +11,50 @@
   .trending-grid { min-width: 760px; }
   .trending .slider { overflow-x: auto; padding-bottom: 8px; }
 }
+
+/* Feedback polish: make slide progression controls visible at a glance. */
+.slide-controls .next-slide-button {
+  border-color: var(--coral) !important;
+  color: var(--ink) !important;
+  background: var(--coral) !important;
+  box-shadow: 0 0 0 3px rgba(255, 118, 87, .14), 0 8px 18px rgba(255, 118, 87, .18);
+  font-size: 1rem;
+  font-weight: 900;
+}
+.slide-controls .next-slide-button:hover:not(:disabled),
+.slide-controls .next-slide-button:focus-visible {
+  border-color: var(--coral-soft) !important;
+  color: var(--ink) !important;
+  background: var(--coral-soft) !important;
+  box-shadow: 0 0 0 4px rgba(255, 118, 87, .2), 0 10px 22px rgba(255, 118, 87, .24);
+  outline: none;
+  transform: translateY(-2px) scale(1.04);
+}
+.slide-controls .next-slide-button:disabled {
+  border-color: rgba(255, 118, 87, .48) !important;
+  color: rgba(9, 11, 18, .58) !important;
+  background: rgba(255, 118, 87, .48) !important;
+  box-shadow: none;
+}
+.hero__display-note {
+  display: inline-flex;
+  margin: 13px 0 0 !important;
+  padding: 5px 9px;
+  border: 1px solid rgba(185, 181, 255, .3);
+  border-radius: 999px;
+  color: var(--lavender) !important;
+  background: rgba(185, 181, 255, .08);
+  font-size: .58rem !important;
+  font-weight: 800;
+  letter-spacing: .11em;
+  text-transform: uppercase;
+}
+.collection-note {
+  max-width: 620px;
+  color: var(--muted) !important;
+  font-size: .72rem !important;
+  line-height: 1.55;
+}
+@media (max-width: 720px) {
+  .slide-controls .next-slide-button { box-shadow: 0 0 0 2px rgba(255, 118, 87, .16), 0 6px 14px rgba(255, 118, 87, .16); }
+}

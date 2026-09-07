@@ -21,7 +21,7 @@
 
   <header class="topbar" id="top">
     <a class="brand" href="#top" data-scroll aria-label="ILoveNime home"><b>ILN</b><span>ILoveNime<small>Hyouta's anime shelf</small></span></a>
-    <nav class="main-nav" aria-label="Main navigation"><a href="#discover" data-scroll>Discover</a><a href="#collection" data-scroll>My list</a><a href="https://tally.so/r/7RAZd2">Kritik dan saran</a><a href="https://sociabuzz.com/neonishikawa/tribe" id="donateLink" title="Link donasi akan ditambahkan">Donate</a><span class="source-pill" id="sourceStatus">System checking</span></nav>
+    <nav class="main-nav" aria-label="Main navigation"><a href="#discover" data-scroll>Discover</a><a href="#collection" data-scroll>My list</a><a href="/feedback.html">Kritik dan saran</a><a href="https://sociabuzz.com/neonishikawa/tribe" id="donateLink" title="Link donasi akan ditambahkan">Donate</a></nav>
     <div class="nav-search" id="navSearch"></div>
     <button class="local-badge" title="Tracking tersimpan hanya pada browser ini"><img src="/icons/user.svg" alt="" />Local</button>
   </header>
@@ -38,7 +38,7 @@
         <div class="hero__profile">
           <div class="hero__profile-glow" aria-hidden="true"></div>
           <div class="hero__portrait-wrap"><img class="hero__portrait" src="/assets/hyouta.jpg" alt="Hyouta" /></div>
-          <div class="hero__profile-copy"><p class="kicker">YOUR ANIME GUIDE</p><h2>Hi, I’m <span>Hyouta.</span></h2><p>Let’s find a story worth staying up for.</p><div class="hero__profile-tags"><span>CURATED</span><span>PERSONAL</span></div></div>
+          <div class="hero__profile-copy"><p class="kicker">YOUR ANIME GUIDE</p><h2>Hi, I’m <span>Hyouta.</span></h2><p>Let’s find a story worth staying up for.</p><p class="hero__display-note">Hanya tampilan</p><div class="hero__profile-tags"><span>CURATED</span><span>PERSONAL</span></div></div>
           <span class="profile-spark spark--one" aria-hidden="true">✦</span><span class="profile-spark spark--two" aria-hidden="true">✧</span>
         </div>
       </div>
@@ -47,21 +47,21 @@
     <section class="discover trending" id="trending">
       <div class="section-bar"><div><p class="kicker">EDITORIAL / RATING + VIEWERS</p><h2>Trending <span>anime.</span></h2><p class="section-note">10 judul terpopuler dari jadwal terbaru, dihitung dari kombinasi rating dan jumlah penonton.</p></div><div class="result-meta"><b id="trendingCount">—</b><span>top trending</span></div></div>
       <div class="catalog-state" id="trendingState">Memuat anime trending…</div>
-      <div class="slider hidden" id="trendingSlider"><div class="slide-controls"><button id="previousTrending" aria-label="Slide trending sebelumnya">←</button><span id="trendingSlideLabel">01 / 02</span><button id="nextTrending" aria-label="Slide trending berikutnya">→</button></div><div class="catalog-grid trending-grid" id="trendingGrid" aria-live="polite"></div></div>
+      <div class="slider hidden" id="trendingSlider"><div class="slide-controls"><button id="previousTrending" aria-label="Slide trending sebelumnya">←</button><span id="trendingSlideLabel">01 / 02</span><button class="next-slide-button" id="nextTrending" aria-label="Slide trending berikutnya">→</button></div><div class="catalog-grid trending-grid" id="trendingGrid" aria-live="polite"></div></div>
     </section>
 
     <section class="discover" id="discover">
       <div class="section-bar"><div><p class="kicker">DISCOVERY / TODAY'S DROP</p><h2 id="resultsHeading">New <span>anime.</span></h2></div><div class="result-meta"><b id="resultCount">—</b><span>titles found</span></div></div>
       <div class="genre-strip" id="genreStrip"><button class="genre-chip is-active" data-genre="">All</button></div>
       <div class="catalog-state" id="catalogState">Memuat anime terbaru hari ini…</div>
-      <div class="slider hidden" id="slider"><div class="slide-controls"><button id="previousSlide" aria-label="Slide sebelumnya">←</button><span id="slideLabel">01 / 01</span><button id="nextSlide" aria-label="Slide berikutnya">→</button></div><div class="catalog-grid" id="catalogGrid" aria-live="polite"></div><div class="slide-controls slide-controls--bottom"><button id="previousSlideBottom" aria-label="Slide sebelumnya">←</button><span id="slideLabelBottom">01 / 01</span><button id="nextSlideBottom" aria-label="Slide berikutnya">→</button></div></div>
+      <div class="slider hidden" id="slider"><div class="slide-controls"><button id="previousSlide" aria-label="Slide sebelumnya">←</button><span id="slideLabel">01 / 01</span><button class="next-slide-button" id="nextSlide" aria-label="Slide berikutnya">→</button></div><div class="catalog-grid" id="catalogGrid" aria-live="polite"></div><div class="slide-controls slide-controls--bottom"><button id="previousSlideBottom" aria-label="Slide sebelumnya">←</button><span id="slideLabelBottom">01 / 01</span><button class="next-slide-button" id="nextSlideBottom" aria-label="Slide berikutnya">→</button></div></div>
     </section>
 
     <section class="detail hidden" id="detail"><div class="detail__rail"><span>DETAIL / SELECTED TITLE</span><button id="closeDetail">Close detail ×</button></div><div class="detail__body" id="detailBody"></div></section>
 
     <section class="collection" id="collection">
       <div class="collection-panel">
-        <div class="section-bar"><div><p class="kicker">LOCAL STORAGE / YOUR SHELF</p><h2>Your <span>anime list.</span></h2><p class="section-note">Anime yang kamu simpan akan muncul di sini.</p></div><button class="clear-button" id="clearCollection">Clear local data</button></div>
+        <div class="section-bar"><div><p class="kicker">LOCAL STORAGE / YOUR SHELF</p><h2>Your <span>anime list.</span></h2><p class="section-note">Anime yang kamu simpan akan muncul di sini.</p><p class="section-note collection-note">Tidak perlu login, karena local storage ini tersimpan di dalam penyimpanan device Anda.</p></div><button class="clear-button" id="clearCollection">Clear local data</button></div>
         <div class="collection-stats" id="collectionStats"></div>
         <div id="collectionFilters"></div>
         <div class="collection-list" id="collectionList"><p class="empty-state">Belum ada anime dalam list lokal.</p></div>
