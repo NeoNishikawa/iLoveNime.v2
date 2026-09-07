@@ -1,0 +1,47 @@
+<!doctype html>
+<html lang="id">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <meta name="theme-color" content="#090b12" />
+  <title>Kritik dan saran — ILoveNime</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700;800&family=Space+Grotesk:wght@500;600;700&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="/css/tokens.css" />
+  <link rel="stylesheet" href="/css/layout.css" />
+  <link rel="stylesheet" href="/css/components.css" />
+  <link rel="stylesheet" href="/css/responsive.css" />
+  <link rel="stylesheet" href="/css/overrides.css" />
+  <link rel="stylesheet" href="/css/feedback.css" />
+</head>
+<body>
+  <header class="topbar" id="top">
+    <a class="brand" href="/" aria-label="Kembali ke ILoveNime"><b>ILN</b><span>ILoveNime<small>Hyouta's anime shelf</small></span></a>
+    <nav class="main-nav" aria-label="Navigasi halaman"><a href="/">Home</a><a href="/feedback.html" aria-current="page">Kritik dan saran</a><a href="#" title="Link donasi akan ditambahkan">Donate</a></nav>
+    <span class="source-pill">FEEDBACK / LOCAL FORM</span>
+  </header>
+
+  <main class="feedback-page">
+    <section class="feedback-intro" aria-labelledby="feedbackTitle">
+      <p class="kicker">OPEN CHANNEL / YOUR VOICE</p>
+      <h1 id="feedbackTitle">Kritik dan <span>saran.</span></h1>
+      <p>Bagikan masalah, ide, atau pengalamanmu saat menggunakan ILoveNime. Foto hanya digunakan sebagai bukti pendukung.</p>
+    </section>
+
+    <section class="feedback-panel" aria-labelledby="formTitle">
+      <div class="feedback-panel__head"><p class="kicker">FEEDBACK FORM</p><h2 id="formTitle">Bantu kami membuatnya lebih baik.</h2></div>
+      <form id="feedbackForm" novalidate>
+        <div class="feedback-field"><label for="username">Nama pengguna <span aria-hidden="true">*</span></label><input id="username" name="username" type="text" autocomplete="nickname" maxlength="80" required aria-describedby="usernameHelp usernameError" /><p id="usernameHelp">Nama yang ingin ditampilkan pada laporan.</p><p class="feedback-error" id="usernameError" role="alert"></p></div>
+        <div class="feedback-field"><label for="description">Penjelasan <span aria-hidden="true">*</span></label><textarea id="description" name="description" rows="7" maxlength="2000" required aria-describedby="descriptionHelp descriptionError"></textarea><p id="descriptionHelp">Jelaskan kritik, saran, atau langkah untuk mengulangi masalahnya.</p><p class="feedback-error" id="descriptionError" role="alert"></p></div>
+        <div class="feedback-field"><label for="photo">Foto pendukung <span class="optional">(opsional)</span></label><input id="photo" name="photo" type="file" accept="image/jpeg,image/png" data-max-size="3145728" aria-describedby="photoHelp photoError" /><p id="photoHelp">Hanya JPG/PNG, maksimal 3 MB untuk satu file.</p><p class="feedback-error" id="photoError" role="alert"></p></div>
+        <div class="feedback-actions"><button class="save-track" id="feedbackSubmit" type="submit">Validasi feedback</button><a class="feedback-back" href="/">Kembali ke ILoveNime</a></div>
+        <p class="feedback-status" id="feedbackStatus" role="status" aria-live="polite"></p>
+      </form>
+    </section>
+
+    <aside class="feedback-advice" aria-labelledby="submitAdviceTitle"><p class="kicker">SARAN SUBMIT</p><h2 id="submitAdviceTitle">Form ini sudah siap divalidasi.</h2><p>Saat kamu sudah menentukan tujuan pengiriman, pilihan paling aman adalah endpoint backend internal atau inbox admin. Dengan begitu validasi ukuran dan tipe file juga bisa diterapkan ulang di server.</p><p class="feedback-note">Untuk sekarang, tombol hanya memvalidasi input dan tidak mengirim data ke pihak luar.</p></aside>
+  </main>
+  <script type="module" src="/js/feedback.js"></script>
+</body>
+</html>
