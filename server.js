@@ -228,9 +228,11 @@ async function trendingWithSources() {
   const candidates = (daily?.data || []).slice(0, 20);
   const rated = await Promise.allSettled(candidates.map(async (anime) => {
     const detail = await cached(`detail:animasu:${anime.slug}`, () => fetchAnimeDetail(anime.slug), DETAIL_CACHE_MS, true);
-    return { ...anime, rating: Number(detail?.rating) || 0, type: detail?.type || anime.type, episode: detail?.episode || anime.episode, sourceProvider: "animasu" };
+    return { ...anime, rating: Number(detail?.rating) || 0, viewers: Number(detail?.viewers) || 0, type: detail?.type || anime.type, episode: detail?.episode || anime.episode, sourceProvider: "animasu" };
   }));
-  const data = rated.filter((result) => result.status === "fulfilled" && result.value.rating > 0).map((result) => result.value).sort((a, b) => b.rating - a.rating || a.title.localeCompare(b.title)).slice(0, 10);
+  const candidatesWithData = rated.filter((result) => result.status === "fulfilled" && result.value.rating > 0).map((result) => result.value);
+  const maxViewers = Math.max(...candidatesWithData.map((anime) => anime.viewers), 1);
+  const data = candidatesWithData.map((anime) => ({ ...anime, trendScore: (anime.rating / 10) * 0.7 + (anime.viewers / maxViewers) * 0.3 })).sort((a, b) => b.trendScore - a.trendScore || b.rating - a.rating || a.title.localeCompare(b.title)).slice(0, 10);
   if (!data.length) throw new Error("Belum ada rating anime yang dapat dibaca dari source.");
   return { data, provider: "animasu" };
 }
@@ -456,7 +458,11 @@ function parseAnimeDetail(html, slug, baseUrl = ANIMASU_BASE_URL) {
     const episodeTitle = anchor.text().trim();
     if (episodeSlug && episodeTitle) episodes.push({ episode: episodeTitle, slug: episodeSlug, sourceUrl: absoluteUrl(anchor.attr("href"), baseUrl), sourceProvider: "animasu" });
   });
-  return { slug, title, synonym, synopsis: $(".sinopsis p, .synopsis p").first().text().trim(), image: absoluteUrl(image, baseUrl), rating: Number(( $(".rating strong").first().text().match(/[0-9.]+/) || [0])[0]) || 0, genres, status: readInfo("status"), aired: readInfo("rilis"), type: readInfo("jenis") || "Unknown", episode: readInfo("episode") || "Unknown", duration: readInfo("durasi") || "Unknown", studio: readInfo("studio") || "Unknown", season: readInfo("musim") || "Unknown", trailer: $(".trailer iframe").attr("src") || "", updateAt: info.find("time[itemprop=dateModified]").attr("datetime") || "", episodes, batches: [] };
+  const statsText = info.text().replace(/\s+/g, " ");
+  const viewersMatch = statsText.match(/(?:views?|penonton|ditonton|watchers?)\s*[:\-]?\s*([\d.,]+\s*[KMB]?)/i);
+  const viewersRaw = viewersMatch?.[1]?.replace(/\s+/g, "").toUpperCase() || "0";
+  const viewers = viewersRaw.endsWith("K") ? Number.parseFloat(viewersRaw) * 1e3 : viewersRaw.endsWith("M") ? Number.parseFloat(viewersRaw) * 1e6 : viewersRaw.endsWith("B") ? Number.parseFloat(viewersRaw) * 1e9 : Number(viewersRaw.replace(/,/g, "")) || 0;
+  return { slug, title, synonym, synopsis: $(".sinopsis p, .synopsis p").first().text().trim(), image: absoluteUrl(image, baseUrl), rating: Number(( $(".rating strong").first().text().match(/[0-9.]+/) || [0])[0]) || 0, viewers, genres, status: readInfo("status"), aired: readInfo("rilis"), type: readInfo("jenis") || "Unknown", episode: readInfo("episode") || "Unknown", duration: readInfo("durasi") || "Unknown", studio: readInfo("studio") || "Unknown", season: readInfo("musim") || "Unknown", trailer: $(".trailer iframe").attr("src") || "", updateAt: info.find("time[itemprop=dateModified]").attr("datetime") || "", episodes, batches: [] };
 }
 
 async function fetchAnimeDetail(slug) {

@@ -21,7 +21,7 @@
 
   <header class="topbar" id="top">
     <a class="brand" href="#top" data-scroll aria-label="ILoveNime home"><b>ILN</b><span>ILoveNime<small>Hyouta's anime shelf</small></span></a>
-    <nav class="main-nav" aria-label="Main navigation"><a href="#discover" data-scroll>Discover</a><a href="#collection" data-scroll>My list</a><span class="source-pill" id="sourceStatus">System checking</span></nav>
+    <nav class="main-nav" aria-label="Main navigation"><a href="#discover" data-scroll>Discover</a><a href="#collection" data-scroll>My list</a><a href="#" id="donateLink" title="Link donasi akan ditambahkan">Donate</a><span class="source-pill" id="sourceStatus">System checking</span></nav>
     <div class="nav-search" id="navSearch"></div>
     <button class="local-badge" title="Tracking tersimpan hanya pada browser ini"><img src="/icons/user.svg" alt="" />Local</button>
   </header>
@@ -32,7 +32,7 @@
         <div class="hero__eyebrow"><span class="eyebrow-dot"></span><p class="kicker">iLoveNime:</p><span class="hero__season">v2</span></div>
         <h1>Find your<br /><span>next anime.</span></h1>
         <p class="lede">Ruang personal untuk menemukan serial baru, menyusun progres, dan menonton episode favoritmu dengan nyaman.</p>
-        <div id="searchDock" class="search-dock"><form class="search-form" id="searchForm"><label for="searchInput">Search anime</label><input id="searchInput" autocomplete="off" placeholder="Ketik judul anime…" /><button type="submit">Search</button></form><p class="search-help">Ketik untuk mencari langsung — tidak perlu menekan Enter.</p></div>
+        <div id="searchDock" class="search-dock"><form class="search-form" id="searchForm"><label for="searchInput">Search anime</label><input id="searchInput" autocomplete="off" placeholder="Ketik judul anime…" /><button type="submit">Search</button></form><p class="search-help">Tekan Enter atau tombol Search untuk menampilkan hasil.</p></div>
       </div>
       <div class="hero__scene" id="heroScene">
         <div class="hero__profile">
@@ -45,7 +45,7 @@
     </section>
 
     <section class="discover trending" id="trending">
-      <div class="section-bar"><div><p class="kicker">EDITORIAL / TOP RATED NOW</p><h2>Trending <span>anime.</span></h2><p class="section-note">10 judul dengan rating tertinggi dari jadwal terbaru, diurutkan dari rating paling tinggi.</p></div><div class="result-meta"><b id="trendingCount">—</b><span>top rated</span></div></div>
+      <div class="section-bar"><div><p class="kicker">EDITORIAL / RATING + VIEWERS</p><h2>Trending <span>anime.</span></h2><p class="section-note">10 judul terpopuler dari jadwal terbaru, dihitung dari kombinasi rating dan jumlah penonton.</p></div><div class="result-meta"><b id="trendingCount">—</b><span>top trending</span></div></div>
       <div class="catalog-state" id="trendingState">Memuat anime trending…</div>
       <div class="slider hidden" id="trendingSlider"><div class="slide-controls"><button id="previousTrending" aria-label="Slide trending sebelumnya">←</button><span id="trendingSlideLabel">01 / 02</span><button id="nextTrending" aria-label="Slide trending berikutnya">→</button></div><div class="catalog-grid trending-grid" id="trendingGrid" aria-live="polite"></div></div>
     </section>
