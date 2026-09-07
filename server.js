@@ -190,6 +190,10 @@ function slices(items) {
   return Array.from({ length: Math.ceil(items.length / SLIDE_SIZE) }, (_, index) => items.slice(index * SLIDE_SIZE, (index + 1) * SLIDE_SIZE));
 }
 
+function trendingSlices(items) {
+  return Array.from({ length: Math.ceil(items.length / 5) }, (_, index) => items.slice(index * 5, (index + 1) * 5));
+}
+
 function todayKey(date = new Date()) {
   const weekday = new Intl.DateTimeFormat("id-ID", { weekday: "long", timeZone: USER_TIME_ZONE }).format(date).toLowerCase();
   return DAY_KEYS.includes(weekday) ? weekday : "minggu";
@@ -217,6 +221,18 @@ async function dailyWithSources() {
     try { return { data: await dailyFromProvider(source.id), provider: source.id }; } catch (error) { lastError = error; }
   }
   throw lastError || new Error("Tidak ada source anime yang dapat diakses.");
+}
+
+async function trendingWithSources() {
+  const daily = await cached(`daily:${todayKey()}`, dailyWithSources, DAILY_CACHE_MS, true);
+  const candidates = (daily?.data || []).slice(0, 20);
+  const rated = await Promise.allSettled(candidates.map(async (anime) => {
+    const detail = await cached(`detail:animasu:${anime.slug}`, () => fetchAnimeDetail(anime.slug), DETAIL_CACHE_MS, true);
+    return { ...anime, rating: Number(detail?.rating) || 0, type: detail?.type || anime.type, episode: detail?.episode || anime.episode, sourceProvider: "animasu" };
+  }));
+  const data = rated.filter((result) => result.status === "fulfilled" && result.value.rating > 0).map((result) => result.value).sort((a, b) => b.rating - a.rating || a.title.localeCompare(b.title)).slice(0, 10);
+  if (!data.length) throw new Error("Belum ada rating anime yang dapat dibaca dari source.");
+  return { data, provider: "animasu" };
 }
 
 async function genresWithSources() {
@@ -609,6 +625,17 @@ app.get("/api/daily", async (_, response) => {
   }
 });
 
+app.get("/api/trending", async (_, response) => {
+  try {
+    const key = `trending:${todayKey()}`;
+    const result = await cached(key, trendingWithSources, DAILY_CACHE_MS, true);
+    const data = result?.data || [];
+    response.json({ data, slides: trendingSlices(data), total: data.length, slideSize: 5, provider: result.provider || "animasu", stale: isStale(key) });
+  } catch (error) {
+    response.status(503).json({ data: [], slides: [], total: 0, error: `Trending belum tersedia: ${error.message}` });
+  }
+});
+
 app.get("/api/genres", async (_, response) => {
   try {
     const key = "genres";
@@ -662,4 +689,5 @@ if (require.main === module) {
   });
 }
 
-module.exports = { app, slices, uniqueBySlug, normalizeEpisodes, todayKey, todayLabel, decodeMirror, normalizeSearchText, splitAliases, titleAliasRecord, matchesTitle, cached, isStale, readFallbackDaily, fallbackDetailFromDaily, runtimeStats, extractSlug, isBlockedSourceHtml, parseAnimeCards, parseAnimeCardsWithDiagnostics, parseGenreLinks, parseDailyCards, parseAlphabetCardsWithDiagnostics, parseAnimeDetail, parseMirrorOptions, hasNextPage, fetchCatalogPage, fetchAlphabetPage, fetchAnimeDetail };
+module.exports = { app, slices, trendingSlices, uniqueBySlug, normalizeEpisodes, todayKey, todayLabel, decodeMirror, normalizeSearchText, splitAliases, titleAliasRecord, matchesTitle, cached, isStale, readFallbackDaily, fallbackDetailFromDaily, runtimeStats, extractSlug, isBlockedSourceHtml, parseAnimeCards, parseAnimeCardsWithDiagnostics, parseGenreLinks, parseDailyCards, parseAlphabetCardsWithDiagnostics, parseAnimeDetail, parseMirrorOptions, hasNextPage, fetchCatalogPage, fetchAlphabetPage, fetchAnimeDetail
+};
