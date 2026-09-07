@@ -235,3 +235,48 @@
   .orbit-cursor__ring { animation: none !important; }
   .orbit-cursor::after { transition: none; }
 }
+
+/* Minimal cursor finish: no text indicators; orbit rotation is the interaction cue. */
+.orbit-cursor::after { display: none; }
+.orbit-cursor:not(.is-selectable) .orbit-cursor__ring--a {
+  animation: orbit-cursor-idle-a 3.4s linear infinite;
+}
+.orbit-cursor:not(.is-selectable) .orbit-cursor__ring--b {
+  animation: orbit-cursor-idle-b 4.8s linear infinite reverse;
+}
+.orbit-cursor:not(.is-selectable) .orbit-cursor__ring--c {
+  animation: orbit-cursor-idle-c 6.2s linear infinite;
+}
+.orbit-cursor.is-selectable .orbit-cursor__ring--a {
+  animation: orbit-cursor-select-a 1.35s linear infinite;
+}
+.orbit-cursor.is-selectable .orbit-cursor__ring--b {
+  animation: orbit-cursor-select-b 1.85s linear infinite reverse;
+}
+.orbit-cursor.is-selectable .orbit-cursor__ring--c {
+  animation: orbit-cursor-select-c 2.4s linear infinite;
+}
+@keyframes orbit-cursor-idle-a {
+  from { transform: translate(-50%, -50%) rotate(28deg) scaleY(.38) rotateZ(0deg) rotateX(8deg); }
+  to { transform: translate(-50%, -50%) rotate(388deg) scaleY(.38) rotateZ(360deg) rotateX(8deg); }
+}
+@keyframes orbit-cursor-idle-b {
+  from { transform: translate(-50%, -50%) rotate(-24deg) scaleY(.34) rotateZ(0deg) rotateY(-10deg); }
+  to { transform: translate(-50%, -50%) rotate(336deg) scaleY(.34) rotateZ(-360deg) rotateY(-10deg); }
+}
+@keyframes orbit-cursor-idle-c {
+  from { transform: translate(-50%, -50%) rotate(65deg) scaleY(.28) rotateZ(0deg) rotateX(-10deg); }
+  to { transform: translate(-50%, -50%) rotate(425deg) scaleY(.28) rotateZ(360deg) rotateX(-10deg); }
+}
+@keyframes orbit-cursor-select-a {
+  from { transform: translate(-50%, -50%) rotate(28deg) scaleY(.38) rotateZ(0deg) rotateX(24deg) rotateY(-18deg) translateZ(14px); }
+  to { transform: translate(-50%, -50%) rotate(388deg) scaleY(.38) rotateZ(360deg) rotateX(24deg) rotateY(-18deg) translateZ(14px); }
+}
+@keyframes orbit-cursor-select-b {
+  from { transform: translate(-50%, -50%) rotate(-24deg) scaleY(.34) rotateZ(0deg) rotateX(-20deg) rotateY(22deg) translateZ(8px); }
+  to { transform: translate(-50%, -50%) rotate(336deg) scaleY(.34) rotateZ(-360deg) rotateX(-20deg) rotateY(22deg) translateZ(8px); }
+}
+@keyframes orbit-cursor-select-c {
+  from { transform: translate(-50%, -50%) rotate(65deg) scaleY(.28) rotateZ(0deg) rotateX(18deg) rotateY(25deg) translateZ(3px); }
+  to { transform: translate(-50%, -50%) rotate(425deg) scaleY(.28) rotateZ(360deg) rotateX(18deg) rotateY(25deg) translateZ(3px); }
+}
