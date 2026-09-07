@@ -1,6 +1,5 @@
 body { position: relative; overflow-x: hidden; }
 body::before { content: ""; position: fixed; inset: 0; z-index: -3; pointer-events: none; background: radial-gradient(circle at 14% 8%, rgba(185,181,255,.16), transparent 31%), radial-gradient(circle at 85% 28%, rgba(255,118,87,.09), transparent 28%), linear-gradient(145deg, #090b12 0%, #0f1220 53%, #090b12 100%); }
-#motionField { position: fixed; inset: 0; z-index: -2; width: 100%; height: 100%; pointer-events: none; opacity: .9; }
 .ambient { position: fixed; width: 30rem; height: 30rem; z-index: -1; border-radius: 50%; pointer-events: none; filter: blur(70px); opacity: .12; }
 .ambient--one { top: 12%; right: -12rem; background: var(--coral); }
 .ambient--two { bottom: -16rem; left: -10rem; background: var(--lavender); }

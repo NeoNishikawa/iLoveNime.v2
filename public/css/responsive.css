@@ -30,4 +30,4 @@
   .player { padding: 15px; }.player__head { align-items: flex-start; }.player__head-actions { gap: 3px; }.player__body { display: flex; flex-direction: column; }.player-screen, .player-screen iframe { min-height: 53vw; }.mirror-panel { padding: 13px; }.player__title-line { align-items: flex-start; flex-direction: column; gap: 4px; }.player__title-line strong { font-size: .9rem; }.player-message { font-size: .59rem; }
 }
 
-@media (prefers-reduced-motion: reduce) { #motionField { display: none; } .hero__profile { animation: none; } }
+@media (prefers-reduced-motion: reduce) { .hero__profile { animation: none; } }

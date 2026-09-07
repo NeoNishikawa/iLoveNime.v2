@@ -58,3 +58,78 @@
 @media (max-width: 720px) {
   .slide-controls .next-slide-button { box-shadow: 0 0 0 2px rgba(255, 118, 87, .16), 0 6px 14px rgba(255, 118, 87, .16); }
 }
+
+/* Orbit cursor: a lightweight pointer replacement inspired by the former orbit scene. */
+.orbit-cursor {
+  position: fixed;
+  z-index: 100;
+  top: 0;
+  left: 0;
+  width: 42px;
+  height: 42px;
+  pointer-events: none;
+  opacity: 0;
+  transform: translate3d(-100px, -100px, 0);
+  transition: opacity .2s ease, width .25s var(--ease), height .25s var(--ease);
+  will-change: transform;
+}
+.orbit-cursor.is-visible { opacity: 1; }
+.orbit-cursor__core {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: 7px;
+  height: 7px;
+  border: 1px solid var(--coral-soft);
+  border-radius: 50%;
+  background: var(--coral);
+  box-shadow: 0 0 0 4px rgba(255, 118, 87, .12), 0 0 16px rgba(255, 118, 87, .45);
+  transform: translate(-50%, -50%);
+}
+.orbit-cursor__ring {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  display: block;
+  border: 1px solid;
+  border-radius: 50%;
+  transform-origin: center;
+  transition: border-color .25s ease, opacity .25s ease, transform .25s ease;
+}
+.orbit-cursor__ring--a {
+  width: 21px;
+  height: 21px;
+  border-color: rgba(185, 181, 255, .84);
+  transform: translate(-50%, -50%) rotate(28deg) scaleY(.38);
+  animation: orbit-cursor-spin-a 3.2s linear infinite;
+}
+.orbit-cursor__ring--b {
+  width: 32px;
+  height: 32px;
+  border-color: rgba(144, 222, 212, .74);
+  transform: translate(-50%, -50%) rotate(-24deg) scaleY(.34);
+  animation: orbit-cursor-spin-b 4.5s linear infinite reverse;
+}
+.orbit-cursor__ring--c {
+  width: 43px;
+  height: 43px;
+  border-color: rgba(255, 118, 87, .6);
+  transform: translate(-50%, -50%) rotate(65deg) scaleY(.28);
+  animation: orbit-cursor-spin-c 5.6s linear infinite;
+}
+.orbit-cursor.is-hovering { width: 52px; height: 52px; }
+.orbit-cursor.is-hovering .orbit-cursor__core { transform: translate(-50%, -50%) scale(1.35); }
+.orbit-cursor.is-hovering .orbit-cursor__ring { opacity: .95; }
+.orbit-cursor.is-hovering .orbit-cursor__ring--a { border-color: var(--coral-soft); }
+.orbit-cursor.is-hovering .orbit-cursor__ring--b { border-color: var(--aqua); }
+.orbit-cursor.is-hovering .orbit-cursor__ring--c { border-color: var(--lavender); }
+.has-orbit-cursor, .has-orbit-cursor a, .has-orbit-cursor button, .has-orbit-cursor input, .has-orbit-cursor select, .has-orbit-cursor textarea { cursor: none; }
+@keyframes orbit-cursor-spin-a { from { transform: translate(-50%, -50%) rotate(28deg) scaleY(.38); } to { transform: translate(-50%, -50%) rotate(388deg) scaleY(.38); } }
+@keyframes orbit-cursor-spin-b { from { transform: translate(-50%, -50%) rotate(-24deg) scaleY(.34); } to { transform: translate(-50%, -50%) rotate(336deg) scaleY(.34); } }
+@keyframes orbit-cursor-spin-c { from { transform: translate(-50%, -50%) rotate(65deg) scaleY(.28); } to { transform: translate(-50%, -50%) rotate(425deg) scaleY(.28); } }
+@media (prefers-reduced-motion: reduce) {
+  .orbit-cursor__ring { animation: none; }
+}
+@media (pointer: coarse), (max-width: 720px) {
+  .orbit-cursor { display: none; }
+}
