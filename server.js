@@ -11,6 +11,8 @@ const { animasu } = require("yaoi");
 axios.defaults.timeout = REQUEST_TIMEOUT_MS;
 
 const app = express();
+// Railway berada di belakang satu reverse proxy; ini membuat request.ip berisi IP client yang benar.
+app.set("trust proxy", 1);
 const memory = new Map();
 const pending = new Map();
 const staleKeys = new Set();
@@ -334,16 +336,32 @@ const sourceState = { status: "unknown", sourceId: null, baseUrl: null, lastSucc
 function markSourceSuccess(baseUrl, sourceId = "animasu") { sourceState.status = "up"; sourceState.sourceId = sourceId; sourceState.baseUrl = baseUrl; sourceState.lastSuccessAt = new Date().toISOString(); sourceState.lastError = null; }
 function markSourceFailure(error) { sourceState.status = "down"; sourceState.sourceId = error?.sourceId || sourceState.sourceId; sourceState.lastError = error?.message || String(error); }
 const catalogHits = new Map();
-function catalogRateLimit(request, response, next) {
-  const now = Date.now();
-  const key = request.ip || request.socket.remoteAddress || "unknown";
-  const recent = (catalogHits.get(key) || []).filter((timestamp) => now - timestamp < 60_000);
-  if (recent.length >= 30) return response.status(429).json({ data: [], slides: [], total: 0, error: "Terlalu banyak pencarian dalam satu menit. Tunggu sebentar lalu coba lagi." });
-  recent.push(now);
-  catalogHits.set(key, recent);
-  if (catalogHits.size > 200) for (const [storedKey, timestamps] of catalogHits) if (!timestamps.some((timestamp) => now - timestamp < 60_000)) catalogHits.delete(storedKey);
-  next();
+const apiHits = new Map();
+const RATE_WINDOW_MS = 60_000;
+function clientKey(request) { return request.ip || request.socket.remoteAddress || "unknown"; }
+function rateLimit({ store, max, message }) {
+  return (request, response, next) => {
+    const now = Date.now();
+    const key = clientKey(request);
+    const recent = (store.get(key) || []).filter((timestamp) => now - timestamp < RATE_WINDOW_MS);
+    if (recent.length >= max) {
+      const oldest = recent[0] || now;
+      const retryAfter = Math.max(1, Math.ceil((RATE_WINDOW_MS - (now - oldest)) / 1000));
+      response.set("Retry-After", String(retryAfter));
+      return response.status(429).json({ data: [], total: 0, error: message, retryAfter });
+    }
+    recent.push(now);
+    store.set(key, recent);
+    if (store.size > 2000) {
+      for (const [storedKey, timestamps] of store) {
+        if (!timestamps.some((timestamp) => now - timestamp < RATE_WINDOW_MS)) store.delete(storedKey);
+      }
+    }
+    next();
+  };
 }
+const apiRateLimit = rateLimit({ store: apiHits, max: 120, message: "Terlalu banyak permintaan. Tunggu sebentar lalu coba lagi." });
+const catalogRateLimit = rateLimit({ store: catalogHits, max: 30, message: "Terlalu banyak pencarian dalam satu menit. Tunggu sebentar lalu coba lagi." });
 const NON_ANIME_PATHS = new Set(["page", "pencarian", "jadwal", "genre", "genres", "studio", "karakter"]);
 
 function extractSlug(value) {
@@ -549,7 +567,7 @@ app.use("/vendor/animejs", express.static(path.join(__dirname, "node_modules", "
 app.use("/vendor/three", express.static(path.join(__dirname, "node_modules", "three", "build")));
 app.use(express.static(path.join(__dirname, "public")));
 
-app.get("/api/health", (_, response) => response.json({ ok: true, provider: "animasu + yaoi", source: ANIMASU_BASE_URL, sources: [{ id: "animasu", baseUrl: ANIMASU_BASE_URL }, { id: "yaoi", baseUrl: "npm:yaoi" }], sourceStatus: sourceState.status, sourceId: sourceState.sourceId, sourceBaseUrl: sourceState.baseUrl, sourceLastSuccessAt: sourceState.lastSuccessAt, sourceLastError: sourceState.lastError, ...runtimeStats() }));
+app.get("/api/health", apiRateLimit, (_, response) => response.json({ ok: true, provider: "animasu + yaoi", source: ANIMASU_BASE_URL, sources: [{ id: "animasu", baseUrl: ANIMASU_BASE_URL }, { id: "yaoi", baseUrl: "npm:yaoi" }], sourceStatus: sourceState.status, sourceId: sourceState.sourceId, sourceBaseUrl: sourceState.baseUrl, sourceLastSuccessAt: sourceState.lastSuccessAt, sourceLastError: sourceState.lastError, ...runtimeStats() }));
 
 async function collectCatalog(search, genre, signal) {
   const found = [];
@@ -617,7 +635,7 @@ app.get("/api/catalog", catalogRateLimit, async (request, response) => {
   }
 });
 
-app.get("/api/daily", async (_, response) => {
+app.get("/api/daily", apiRateLimit, async (_, response) => {
   try {
     const key = `daily:${todayKey()}`;
     const result = await cached(key, dailyWithSources, DAILY_CACHE_MS, true);
@@ -631,7 +649,7 @@ app.get("/api/daily", async (_, response) => {
   }
 });
 
-app.get("/api/trending", async (_, response) => {
+app.get("/api/trending", apiRateLimit, async (_, response) => {
   try {
     const key = `trending:${todayKey()}`;
     const result = await cached(key, trendingWithSources, DAILY_CACHE_MS, true);
@@ -642,7 +660,7 @@ app.get("/api/trending", async (_, response) => {
   }
 });
 
-app.get("/api/genres", async (_, response) => {
+app.get("/api/genres", apiRateLimit, async (_, response) => {
   try {
     const key = "genres";
     const result = await cached(key, genresWithSources, CACHE_MS, true);
@@ -651,7 +669,7 @@ app.get("/api/genres", async (_, response) => {
   } catch (error) { response.status(503).json({ data: [], error: `Genre live tidak tersedia: ${error.message}` }); }
 });
 
-app.get("/api/anime/:slug", async (request, response) => {
+app.get("/api/anime/:slug", apiRateLimit, async (request, response) => {
   const provider = "animasu";
   try {
     const key = `detail:${provider}:${request.params.slug}`;
@@ -665,7 +683,7 @@ app.get("/api/anime/:slug", async (request, response) => {
   }
 });
 
-app.get("/api/streams/:episodeSlug", async (request, response) => {
+app.get("/api/streams/:episodeSlug", apiRateLimit, async (request, response) => {
   const provider = "yaoi";
   try {
     const key = `streams:${provider}:${request.params.episodeSlug}`;
