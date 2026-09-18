@@ -565,7 +565,10 @@ app.use(compression());
 app.use(express.json());
 app.use("/vendor/animejs", express.static(path.join(__dirname, "node_modules", "animejs", "dist", "bundles")));
 app.use("/vendor/three", express.static(path.join(__dirname, "node_modules", "three", "build")));
-app.use(express.static(path.join(__dirname, "public")));
+app.use(express.static(path.join(__dirname, "public"), { index: false }));
+
+// Railway/web production opens the maintenance screen first; API and asset routes remain available.
+app.get("/", (_, response) => response.sendFile(path.join(__dirname, "public", "maintenance.html")));
 
 app.get("/api/health", apiRateLimit, (_, response) => response.json({ ok: true, provider: "animasu + yaoi", source: ANIMASU_BASE_URL, sources: [{ id: "animasu", baseUrl: ANIMASU_BASE_URL }, { id: "yaoi", baseUrl: "npm:yaoi" }], sourceStatus: sourceState.status, sourceId: sourceState.sourceId, sourceBaseUrl: sourceState.baseUrl, sourceLastSuccessAt: sourceState.lastSuccessAt, sourceLastError: sourceState.lastError, ...runtimeStats() }));
 

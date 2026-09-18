@@ -29,6 +29,10 @@ animasu.listen(PORT, "127.0.0.1", async () => {
   const application = app.listen(0, "127.0.0.1", async () => {
     const base = `http://127.0.0.1:${application.address().port}`;
     try {
+      const maintenance = await fetch(`${base}/`);
+      assert.equal(maintenance.status, 200);
+      assert.match(await maintenance.text(), /maintenance|under maintenance|maintenance mode/i);
+
       const daily = await json(`${base}/api/daily`);
       assert.equal(daily.status, 200);
       assert.equal(daily.body.provider, "animasu");
