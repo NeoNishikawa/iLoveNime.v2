@@ -1,0 +1,74 @@
+<!doctype html>
+<html lang="id">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>iLoveNime — Maintenance</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=Space+Grotesk:wght@500;600;700&display=swap" rel="stylesheet" />
+  <style>
+    :root { color-scheme: dark; --bg:#08080a; --panel:#111114; --line:rgba(255,255,255,.11); --muted:#92929b; --text:#f4f4f5; --red:#ef4444; --green:#34d399; }
+    * { box-sizing:border-box; } html { scroll-behavior:smooth; } body { margin:0; min-height:100vh; color:var(--text); background:#050506; font-family:"Plus Jakarta Sans",sans-serif; }
+    .shell { position:relative; min-height:100vh; max-width:1400px; margin:auto; overflow:hidden; background:#08080a; border:1px solid rgba(255,255,255,.1); }
+    .hero { position:relative; min-height:650px; display:flex; flex-direction:column; isolation:isolate; background:linear-gradient(90deg,rgba(8,8,10,.9),rgba(8,8,10,.25),rgba(8,8,10,.9)); }
+    .hero::before { content:""; position:absolute; inset:0; z-index:-2; background:linear-gradient(180deg,rgba(0,0,0,.25),#08080a 95%), linear-gradient(90deg,rgba(8,8,10,.86),rgba(8,8,10,.1),rgba(8,8,10,.88)), url("/assets/hyouta.jpg") center/cover; filter:grayscale(1) contrast(1.15); opacity:.72; }
+    .hero::after { content:""; position:absolute; inset:0; z-index:-1; pointer-events:none; opacity:.16; background:repeating-linear-gradient(0deg,transparent 0 2px,rgba(255,255,255,.16) 3px 4px); mix-blend-mode:overlay; }
+    header { display:flex; align-items:center; justify-content:space-between; padding:28px 42px; }
+    .menu { display:grid; gap:6px; width:30px; padding:8px 0; } .menu i { display:block; width:24px; height:2px; background:#ddd; } .menu i:last-child { width:15px; background:var(--red); }
+    .brand { color:#fff; text-decoration:none; text-align:center; font-family:"Space Grotesk"; font-weight:700; letter-spacing:.18em; text-transform:uppercase; font-size:1.2rem; } .brand span { color:var(--red); } .brand small { display:block; margin-top:4px; color:#8d8d95; font:500 .48rem "Plus Jakarta Sans"; letter-spacing:.38em; }
+    .header-search { display:flex; align-items:center; gap:9px; color:#aaa; } .header-search svg { width:18px; } .header-search span { display:none; }
+    .hero-content { flex:1; display:flex; flex-direction:column; align-items:center; justify-content:center; padding:60px 20px 110px; text-align:center; }
+    .pill { display:inline-flex; align-items:center; gap:9px; padding:8px 13px; border:1px solid rgba(255,255,255,.15); border-radius:999px; color:#c8c8cc; background:rgba(15,15,18,.72); font-size:.65rem; font-weight:700; letter-spacing:.18em; text-transform:uppercase; } .dot { width:8px; height:8px; border-radius:50%; background:var(--red); box-shadow:0 0 10px var(--red); }
+    h1 { margin:22px 0 0; font:700 clamp(3.2rem,9vw,7.7rem)/.9 "Space Grotesk"; letter-spacing:-.06em; text-shadow:0 0 24px rgba(255,255,255,.22),0 0 65px rgba(239,68,68,.48); } .subtitle { margin:24px 0 0; color:#e4e4e7; font-size:clamp(1rem,2vw,1.4rem); font-weight:600; } .subtitle strong { border-bottom:2px solid var(--red); }
+    .note { margin:10px 0 0; color:#a1a1aa; font-size:.86rem; }
+    .storage { padding:38px 42px 70px; background:rgba(8,8,10,.96); border-top:1px solid var(--line); } .storage-head { display:flex; align-items:flex-end; justify-content:space-between; gap:20px; padding-bottom:24px; border-bottom:1px solid var(--line); } .storage-title { display:flex; gap:13px; align-items:flex-start; } .storage-title::before { content:""; width:5px; min-height:43px; border-radius:4px; background:var(--red); box-shadow:0 0 14px rgba(239,68,68,.7); } h2 { margin:0; font:700 clamp(1.5rem,3vw,2.2rem) "Space Grotesk"; letter-spacing:.03em; text-transform:uppercase; } .meta { margin:6px 0 0; color:var(--muted); font-size:.72rem; } .status { display:inline-flex; align-items:center; gap:6px; margin-left:8px; padding:4px 8px; color:var(--green); border:1px solid rgba(52,211,153,.3); border-radius:999px; font-size:.58rem; font-weight:800; text-transform:uppercase; letter-spacing:.08em; }
+    .actions { display:flex; flex-wrap:wrap; gap:9px; } button, .button { border:1px solid rgba(255,255,255,.15); border-radius:4px; color:#d4d4d8; background:#161619; padding:10px 13px; cursor:pointer; font:700 .63rem "Plus Jakarta Sans"; letter-spacing:.1em; text-transform:uppercase; text-decoration:none; } button:hover, .button:hover { border-color:var(--red); color:#fff; } .danger { color:#f87171; border-color:rgba(239,68,68,.35); }
+    .toolbar { display:flex; align-items:center; justify-content:space-between; gap:15px; padding:25px 0 18px; } .toolbar p { margin:0; color:var(--muted); font-size:.75rem; } .search-box { position:relative; width:min(100%,340px); } .search-box input { width:100%; padding:12px 14px 12px 40px; border:1px solid var(--line); border-radius:5px; outline:none; color:#fff; background:#111114; font:500 .78rem "Plus Jakarta Sans"; } .search-box input:focus { border-color:rgba(239,68,68,.75); box-shadow:0 0 0 3px rgba(239,68,68,.1); } .search-box svg { position:absolute; top:11px; left:13px; width:18px; color:#777; }
+    .anime-grid { display:grid; grid-template-columns:repeat(auto-fill,minmax(170px,1fr)); gap:15px; } .anime-card { overflow:hidden; border:1px solid rgba(255,255,255,.1); border-radius:7px; background:rgba(18,18,22,.84); transition:transform .2s,border-color .2s,box-shadow .2s; } .anime-card:hover { transform:translateY(-4px); border-color:rgba(239,68,68,.72); box-shadow:0 12px 28px rgba(0,0,0,.3); } .poster { position:relative; aspect-ratio:2/3; background:#1a1a1e; } .poster img { width:100%; height:100%; display:block; object-fit:cover; } .poster-fallback { display:grid; place-items:center; height:100%; padding:15px; color:#666; text-align:center; font-size:.75rem; } .card-body { padding:12px; } .card-title { display:block; min-height:38px; overflow:hidden; color:#f4f4f5; font-size:.78rem; font-weight:700; line-height:1.35; } .progress { display:flex; justify-content:space-between; margin:10px 0 6px; color:#97979f; font-size:.63rem; } .bar { height:4px; overflow:hidden; border-radius:9px; background:#28282d; } .bar i { display:block; height:100%; background:var(--red); } .watch { width:100%; margin-top:11px; padding:9px; color:#fff; background:rgba(239,68,68,.14); border-color:rgba(239,68,68,.35); } .empty { grid-column:1/-1; padding:55px 20px; border:1px dashed rgba(255,255,255,.15); color:#777; text-align:center; font-size:.82rem; }
+    footer { display:flex; justify-content:space-between; gap:15px; padding:20px 42px; color:#777; border-top:1px solid rgba(255,255,255,.08); font:500 .62rem monospace; } footer a { color:#aaa; }
+    @media (max-width:700px) { header,.storage,footer { padding-left:20px; padding-right:20px; } .hero { min-height:580px; } .storage-head,.toolbar { align-items:stretch; flex-direction:column; } .search-box { width:100%; } .anime-grid { grid-template-columns:repeat(2,minmax(0,1fr)); gap:10px; } .header-search span { display:block; font-size:.6rem; } }
+    @media (prefers-reduced-motion:reduce) { *,*::before,*::after { scroll-behavior:auto!important; transition:none!important; animation:none!important; } }
+  </style>
+</head>
+<body>
+  <div class="shell">
+    <section class="hero">
+      <header><a class="menu" href="#storage" aria-label="Buka Local Storage"><i></i><i></i></a><a class="brand" href="/">iLove<span>Nime</span><small>STREAMING &amp; ENJOY</small></a><div class="header-search" aria-hidden="true"><svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><circle cx="11" cy="11" r="7"></circle><path d="m20 20-4-4"></path></svg><span>LOCAL ONLY</span></div></header>
+      <div class="hero-content"><div class="pill"><span class="dot"></span>System upgrade in progress</div><h1>Maintenance</h1><p class="subtitle">Web sedang dalam <strong>perbaikan dan upgrade</strong></p><p class="note">Anime yang tersimpan tetap bisa kamu tonton melalui API.</p><a class="button" href="#storage" style="margin-top:30px">Buka storage lokal ↓</a></div>
+    </section>
+    <section class="storage" id="storage">
+      <div class="storage-head"><div class="storage-title"><div><h2>Local Storage <span class="status"><span class="dot" style="width:6px;height:6px;background:var(--green);box-shadow:none"></span>Offline mode</span></h2><p class="meta"><strong id="storageCount">0 anime</strong> tersimpan • Data dibaca dari browser ini</p></div></div><div class="actions"><button id="exportBtn" type="button">↓ Export</button><button id="importBtn" type="button">↑ Import</button><button class="danger" id="clearBtn" type="button">Hapus data lokal</button><input id="importInput" type="file" accept="application/json" hidden /></div></div>
+      <div class="toolbar"><p id="resultText">Menampilkan semua anime yang tersimpan.</p><label class="search-box"><svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><circle cx="11" cy="11" r="7"></circle><path d="m20 20-4-4"></path></svg><input id="localSearch" type="search" autocomplete="off" placeholder="Cari anime di local storage…" /></label></div>
+      <div class="anime-grid" id="animeGrid" aria-live="polite"></div>
+    </section>
+    <footer><span>● CDN OFFLINE CACHE: READY</span><a href="/">Kembali ke aplikasi utama ↗</a></footer>
+  </div>
+  <script>
+    const KEY = "iln_tracking";
+    const grid = document.querySelector("#animeGrid");
+    const search = document.querySelector("#localSearch");
+    const count = document.querySelector("#storageCount");
+    const resultText = document.querySelector("#resultText");
+    let items = [];
+    const escapeHtml = (value) => { const node = document.createElement("span"); node.textContent = String(value ?? ""); return node.innerHTML; };
+    function readItems() { try { const parsed = JSON.parse(localStorage.getItem(KEY) || "[]"); return Array.isArray(parsed) ? parsed.filter((item) => item && item.slug) : []; } catch { return []; } }
+    function render() {
+      const query = search.value.trim().toLocaleLowerCase();
+      const visible = items.filter((item) => !query || `${item.title || ""} ${item.slug || ""}`.toLocaleLowerCase().includes(query));
+      count.textContent = `${items.length} anime`;
+      resultText.textContent = query ? `${visible.length} hasil untuk “${search.value.trim()}”.` : "Menampilkan semua anime yang tersimpan.";
+      if (!visible.length) { grid.innerHTML = `<div class="empty">${query ? "Anime yang dicari tidak ada di local storage." : "Belum ada anime tersimpan di browser ini."}</div>`; return; }
+      grid.innerHTML = visible.map((item) => { const progress = Math.max(0, Number(item.progress) || 0); const total = Math.max(0, Number(item.total) || 0); const percent = total ? Math.min(100, Math.round(progress / total * 100)) : 0; const title = escapeHtml(item.title || item.slug); const image = item.image ? `<img src="${escapeHtml(item.image)}" alt="Poster ${title}" loading="lazy" onerror="this.parentElement.innerHTML='<div class=poster-fallback>Poster tidak tersedia</div>'">` : `<div class="poster-fallback">Poster tidak tersedia</div>`; return `<article class="anime-card"><div class="poster">${image}</div><div class="card-body"><strong class="card-title" title="${title}">${title}</strong><div class="progress"><span>Episode ${progress} / ${total || "?"}</span><b>${percent}%</b></div><div class="bar"><i style="width:${percent}%"></i></div><a class="button watch" href="/?anime=${encodeURIComponent(item.slug)}">Tonton dengan API ↗</a></div></article>`; }).join("");
+    }
+    function download(name, content) { const link = document.createElement("a"); link.href = URL.createObjectURL(new Blob([content], { type:"application/json" })); link.download = name; link.click(); URL.revokeObjectURL(link.href); }
+    search.addEventListener("input", render);
+    document.querySelector("#exportBtn").onclick = () => download("ilovenime-local-storage.json", JSON.stringify(items, null, 2));
+    document.querySelector("#importBtn").onclick = () => document.querySelector("#importInput").click();
+    document.querySelector("#importInput").onchange = async (event) => { const file = event.target.files[0]; if (!file) return; try { const imported = JSON.parse(await file.text()); if (!Array.isArray(imported)) throw new Error(); localStorage.setItem(KEY, JSON.stringify(imported)); items = readItems(); render(); } catch { alert("File backup tidak valid."); } event.target.value = ""; };
+    document.querySelector("#clearBtn").onclick = () => { if (!items.length || confirm("Hapus semua anime dari local storage browser ini?")) { localStorage.removeItem(KEY); items = []; render(); } };
+    window.addEventListener("storage", () => { items = readItems(); render(); });
+    items = readItems(); render();
+  </script>
+</body>
+</html>
