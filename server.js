@@ -693,7 +693,7 @@ app.get("/api/streams/:episodeSlug", apiRateLimit, async (request, response) => 
   } catch (error) { response.status(502).json({ data: [], total: 0, error: `${provider} tidak dapat membaca mirror: ${error.message}` }); }
 });
 
-app.get("*", (_, response) => response.sendFile(path.join(__dirname, "public", "index.html")));
+app.get("*", (_, response) => response.sendFile(path.join(__dirname, "public", "maintenance.html")));
 if (require.main === module) {
   const host = process.env.HOST || "0.0.0.0";
   const server = app.listen(PORT, host, () => {
