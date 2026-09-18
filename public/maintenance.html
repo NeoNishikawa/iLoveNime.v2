@@ -1,74 +1,437 @@
-<!doctype html>
-<html lang="id">
-<head>
-  <meta charset="utf-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>iLoveNime — Maintenance</title>
-  <link rel="preconnect" href="https://fonts.googleapis.com" />
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=Space+Grotesk:wght@500;600;700&display=swap" rel="stylesheet" />
-  <style>
-    :root { color-scheme: dark; --bg:#08080a; --panel:#111114; --line:rgba(255,255,255,.11); --muted:#92929b; --text:#f4f4f5; --red:#ef4444; --green:#34d399; }
-    * { box-sizing:border-box; } html { scroll-behavior:smooth; } body { margin:0; min-height:100vh; color:var(--text); background:#050506; font-family:"Plus Jakarta Sans",sans-serif; }
-    .shell { position:relative; min-height:100vh; max-width:1400px; margin:auto; overflow:hidden; background:#08080a; border:1px solid rgba(255,255,255,.1); }
-    .hero { position:relative; min-height:650px; display:flex; flex-direction:column; isolation:isolate; background:linear-gradient(90deg,rgba(8,8,10,.9),rgba(8,8,10,.25),rgba(8,8,10,.9)); }
-    .hero::before { content:""; position:absolute; inset:0; z-index:-2; background:url("/assets/hyouta.jpg") center/cover; opacity:1; }
-    .hero::after { content:""; position:absolute; inset:0; z-index:-1; pointer-events:none; opacity:.16; background:repeating-linear-gradient(0deg,transparent 0 2px,rgba(255,255,255,.16) 3px 4px); mix-blend-mode:overlay; }
-    header { display:flex; align-items:center; justify-content:space-between; padding:28px 42px; }
-    .menu { display:grid; gap:6px; width:30px; padding:8px 0; } .menu i { display:block; width:24px; height:2px; background:#ddd; } .menu i:last-child { width:15px; background:var(--red); }
-    .brand { color:#fff; text-decoration:none; text-align:center; font-family:"Space Grotesk"; font-weight:700; letter-spacing:.18em; text-transform:uppercase; font-size:1.2rem; } .brand span { color:var(--red); } .brand small { display:block; margin-top:4px; color:#8d8d95; font:500 .48rem "Plus Jakarta Sans"; letter-spacing:.38em; }
-    .header-search { display:flex; align-items:center; gap:9px; color:#aaa; } .header-search svg { width:18px; } .header-search span { display:none; }
-    .hero-content { flex:1; display:flex; flex-direction:column; align-items:center; justify-content:center; padding:60px 20px 110px; text-align:center; }
-    .pill { display:inline-flex; align-items:center; gap:9px; padding:8px 13px; border:1px solid rgba(255,255,255,.15); border-radius:999px; color:#c8c8cc; background:rgba(15,15,18,.72); font-size:.65rem; font-weight:700; letter-spacing:.18em; text-transform:uppercase; } .dot { width:8px; height:8px; border-radius:50%; background:var(--red); box-shadow:0 0 10px var(--red); }
-    h1 { margin:22px 0 0; font:700 clamp(3.2rem,9vw,7.7rem)/.9 "Space Grotesk"; letter-spacing:-.06em; text-shadow:0 0 24px rgba(255,255,255,.22),0 0 65px rgba(239,68,68,.48); } .subtitle { margin:24px 0 0; color:#e4e4e7; font-size:clamp(1rem,2vw,1.4rem); font-weight:600; } .subtitle strong { border-bottom:2px solid var(--red); }
-    .note { margin:10px 0 0; color:#a1a1aa; font-size:.86rem; }
-    .storage { padding:38px 42px 70px; background:rgba(8,8,10,.96); border-top:1px solid var(--line); } .storage-head { display:flex; align-items:flex-end; justify-content:space-between; gap:20px; padding-bottom:24px; border-bottom:1px solid var(--line); } .storage-title { display:flex; gap:13px; align-items:flex-start; } .storage-title::before { content:""; width:5px; min-height:43px; border-radius:4px; background:var(--red); box-shadow:0 0 14px rgba(239,68,68,.7); } h2 { margin:0; font:700 clamp(1.5rem,3vw,2.2rem) "Space Grotesk"; letter-spacing:.03em; text-transform:uppercase; } .meta { margin:6px 0 0; color:var(--muted); font-size:.72rem; } .status { display:inline-flex; align-items:center; gap:6px; margin-left:8px; padding:4px 8px; color:var(--green); border:1px solid rgba(52,211,153,.3); border-radius:999px; font-size:.58rem; font-weight:800; text-transform:uppercase; letter-spacing:.08em; }
-    .actions { display:flex; flex-wrap:wrap; gap:9px; } button, .button { border:1px solid rgba(255,255,255,.15); border-radius:4px; color:#d4d4d8; background:#161619; padding:10px 13px; cursor:pointer; font:700 .63rem "Plus Jakarta Sans"; letter-spacing:.1em; text-transform:uppercase; text-decoration:none; } button:hover, .button:hover { border-color:var(--red); color:#fff; } .danger { color:#f87171; border-color:rgba(239,68,68,.35); }
-    .toolbar { display:flex; align-items:center; justify-content:space-between; gap:15px; padding:25px 0 18px; } .toolbar p { margin:0; color:var(--muted); font-size:.75rem; } .search-box { position:relative; width:min(100%,340px); } .search-box input { width:100%; padding:12px 14px 12px 40px; border:1px solid var(--line); border-radius:5px; outline:none; color:#fff; background:#111114; font:500 .78rem "Plus Jakarta Sans"; } .search-box input:focus { border-color:rgba(239,68,68,.75); box-shadow:0 0 0 3px rgba(239,68,68,.1); } .search-box svg { position:absolute; top:11px; left:13px; width:18px; color:#777; }
-    .anime-grid { display:grid; grid-template-columns:repeat(auto-fill,minmax(170px,1fr)); gap:15px; } .anime-card { overflow:hidden; border:1px solid rgba(255,255,255,.1); border-radius:7px; background:rgba(18,18,22,.84); transition:transform .2s,border-color .2s,box-shadow .2s; } .anime-card:hover { transform:translateY(-4px); border-color:rgba(239,68,68,.72); box-shadow:0 12px 28px rgba(0,0,0,.3); } .poster { position:relative; aspect-ratio:2/3; background:#1a1a1e; } .poster img { width:100%; height:100%; display:block; object-fit:cover; } .poster-fallback { display:grid; place-items:center; height:100%; padding:15px; color:#666; text-align:center; font-size:.75rem; } .card-body { padding:12px; } .card-title { display:block; min-height:38px; overflow:hidden; color:#f4f4f5; font-size:.78rem; font-weight:700; line-height:1.35; } .progress { display:flex; justify-content:space-between; margin:10px 0 6px; color:#97979f; font-size:.63rem; } .bar { height:4px; overflow:hidden; border-radius:9px; background:#28282d; } .bar i { display:block; height:100%; background:var(--red); } .watch { width:100%; margin-top:11px; padding:9px; color:#fff; background:rgba(239,68,68,.14); border-color:rgba(239,68,68,.35); } .empty { grid-column:1/-1; padding:55px 20px; border:1px dashed rgba(255,255,255,.15); color:#777; text-align:center; font-size:.82rem; }
-    footer { display:flex; justify-content:space-between; gap:15px; padding:20px 42px; color:#777; border-top:1px solid rgba(255,255,255,.08); font:500 .62rem monospace; } footer a { color:#aaa; }
-    @media (max-width:700px) { header,.storage,footer { padding-left:20px; padding-right:20px; } .hero { min-height:580px; } .storage-head,.toolbar { align-items:stretch; flex-direction:column; } .search-box { width:100%; } .anime-grid { grid-template-columns:repeat(2,minmax(0,1fr)); gap:10px; } .header-search span { display:block; font-size:.6rem; } }
-    @media (prefers-reduced-motion:reduce) { *,*::before,*::after { scroll-behavior:auto!important; transition:none!important; animation:none!important; } }
+<!DOCTYPE html>
+
+<html class="scroll-smooth" lang="id" style=""><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>iLoveNime - Sedang Dalam Perbaikan</title>
+<!-- Tailwind CSS v3 with plugins -->
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<!-- Google Fonts for Anime / Modern Dark Aesthetic -->
+<link href="https://fonts.googleapis.com" rel="preconnect"/>
+<link crossorigin="" href="https://fonts.gstatic.com" rel="preconnect"/>
+<link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@700;900&amp;family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&amp;family=Space+Grotesk:wght@700&amp;display=swap" rel="stylesheet"/>
+<script data-purpose="tailwind-config">
+    tailwind.config = {
+      theme: {
+        extend: {
+          fontFamily: {
+            sans: ['"Plus Jakarta Sans"', 'sans-serif'],
+            display: ['"Space Grotesk"', 'sans-serif'],
+            cinzel: ['"Cinzel"', 'serif'],
+          },
+          colors: {
+            brand: {
+              red: '#e63946',
+              dark: '#0a0a0c',
+              card: '#121216',
+            }
+          }
+        }
+      }
+    }
+  </script>
+<style data-purpose="custom-animations">
+    /* Subtle background breathing motion */
+    @keyframes bgBreath {
+      0%, 100% {
+        transform: scale(1.05) translate(0, 0);
+      }
+      50% {
+        transform: scale(1.09) translateY(-6px);
+      }
+    }
+    .animate-bg-float {
+      animation: bgBreath 14s ease-in-out infinite alternate;
+    }
+
+    /* Floating particles / glowing embers */
+    @keyframes floatParticle {
+      0% {
+        transform: translateY(0px) rotate(0deg) scale(0.9);
+        opacity: 0.2;
+      }
+      50% {
+        transform: translateY(-28px) rotate(25deg) scale(1.15);
+        opacity: 0.85;
+      }
+      100% {
+        transform: translateY(-56px) rotate(45deg) scale(0.7);
+        opacity: 0;
+      }
+    }
+    .animate-particle {
+      animation: floatParticle 7s cubic-bezier(0.4, 0, 0.2, 1) infinite;
+    }
+
+    /* Dramatic red neon breathing & text glow */
+    @keyframes neonPulse {
+      0%, 100% {
+        text-shadow: 0 0 20px rgba(255, 255, 255, 0.2), 0 0 40px rgba(230, 57, 70, 0.35);
+      }
+      50% {
+        text-shadow: 0 0 35px rgba(255, 255, 255, 0.45), 0 0 70px rgba(230, 57, 70, 0.7), 0 0 100px rgba(230, 57, 70, 0.3);
+      }
+    }
+    .text-glow-animated {
+      animation: neonPulse 4s ease-in-out infinite alternate;
+    }
+
+    /* Heartbeat animation for donation */
+    @keyframes heartBeat {
+      0%, 100% { transform: scale(1); filter: drop-shadow(0 0 2px rgba(239,68,68,0.4)); }
+      14% { transform: scale(1.22); filter: drop-shadow(0 0 8px rgba(239,68,68,0.8)); }
+      28% { transform: scale(1); }
+      42% { transform: scale(1.18); filter: drop-shadow(0 0 6px rgba(239,68,68,0.7)); }
+      70% { transform: scale(1); }
+    }
+    .animate-heart-pulse {
+      animation: heartBeat 2.4s infinite cubic-bezier(0.215, 0.61, 0.355, 1);
+    }
+
+    /* Staggered card entrance */
+    @keyframes cardFadeSlideUp {
+      from {
+        opacity: 0;
+        transform: translateY(18px);
+      }
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+    .slot-card-animated {
+      opacity: 0;
+      animation: cardFadeSlideUp 0.7s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+    }
+
+    /* CRT scanline overlay */
+    .scanlines {
+      background: linear-gradient(
+        to bottom,
+        rgba(255,255,255,0),
+        rgba(255,255,255,0) 50%,
+        rgba(0, 0, 0, 0.3) 50%,
+        rgba(0, 0, 0, 0.3)
+      );
+      background-size: 100% 4px;
+    }
+
+    /* Live status green glow */
+    @keyframes greenGlowPulse {
+      0%, 100% { box-shadow: 0 0 0 0 rgba(16, 185, 129, 0.6); }
+      50% { box-shadow: 0 0 10px 3px rgba(16, 185, 129, 0.5); }
+    }
+    .glow-green-pulse {
+      animation: greenGlowPulse 2.5s infinite;
+    }
+
+    /* Toast notification styles */
+    #toast-notification {
+      transition: opacity 0.3s cubic-bezier(0.16, 1, 0.3, 1), transform 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+      .animate-bg-float,
+      .animate-particle,
+      .text-glow-animated,
+      .animate-heart-pulse,
+      .slot-card-animated,
+      .glow-green-pulse {
+        animation: none !important;
+        opacity: 1 !important;
+        transform: none !important;
+      }
+    }
   </style>
 </head>
-<body>
-  <div class="shell">
-    <section class="hero">
-      <header><a class="menu" href="#storage" aria-label="Buka Local Storage"><i></i><i></i></a><a class="brand" href="/">iLove<span>Nime</span><small>STREAMING &amp; ENJOY</small></a><div class="header-search" aria-hidden="true"><svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><circle cx="11" cy="11" r="7"></circle><path d="m20 20-4-4"></path></svg><span>LOCAL ONLY</span></div></header>
-      <div class="hero-content"><div class="pill"><span class="dot"></span>System upgrade in progress</div><h1>Maintenance</h1><p class="subtitle">Web sedang dalam <strong>perbaikan dan upgrade</strong></p><p class="note">Anime yang tersimpan masih bisa di tonton secara normal.</p><a class="button" href="#storage" style="margin-top:30px">Buka storage lokal ↓</a></div>
-    </section>
-    <section class="storage" id="storage">
-      <div class="storage-head"><div class="storage-title"><div><h2>Local Storage <span class="status"><span class="dot" style="width:6px;height:6px;background:var(--green);box-shadow:none"></span>Offline mode</span></h2><p class="meta"><strong id="storageCount">0 anime</strong> tersimpan • Data dibaca dari browser ini</p></div></div><div class="actions"><button id="exportBtn" type="button">↓ Export</button><button id="importBtn" type="button">↑ Import</button><button class="danger" id="clearBtn" type="button">Hapus data lokal</button><input id="importInput" type="file" accept="application/json" hidden /></div></div>
-      <div class="toolbar"><p id="resultText">Menampilkan semua anime yang tersimpan.</p><label class="search-box"><svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><circle cx="11" cy="11" r="7"></circle><path d="m20 20-4-4"></path></svg><input id="localSearch" type="search" autocomplete="off" placeholder="Cari anime di local storage…" /></label></div>
-      <div class="anime-grid" id="animeGrid" aria-live="polite"></div>
-    </section>
-    <footer><span>● CDN OFFLINE CACHE: READY</span><a href="/">Kembali ke aplikasi utama ↗</a></footer>
-  </div>
-  <script>
-    const KEY = "iln_tracking";
-    const grid = document.querySelector("#animeGrid");
-    const search = document.querySelector("#localSearch");
-    const count = document.querySelector("#storageCount");
-    const resultText = document.querySelector("#resultText");
-    let items = [];
-    const escapeHtml = (value) => { const node = document.createElement("span"); node.textContent = String(value ?? ""); return node.innerHTML; };
-    function readItems() { try { const parsed = JSON.parse(localStorage.getItem(KEY) || "[]"); return Array.isArray(parsed) ? parsed.filter((item) => item && item.slug) : []; } catch { return []; } }
-    function render() {
-      const query = search.value.trim().toLocaleLowerCase();
-      const visible = items.filter((item) => !query || `${item.title || ""} ${item.slug || ""}`.toLocaleLowerCase().includes(query));
-      count.textContent = `${items.length} anime`;
-      resultText.textContent = query ? `${visible.length} hasil untuk “${search.value.trim()}”.` : "Menampilkan semua anime yang tersimpan.";
-      if (!visible.length) { grid.innerHTML = `<div class="empty">${query ? "Anime yang dicari tidak ada di local storage." : "Belum ada anime tersimpan di browser ini."}</div>`; return; }
-      grid.innerHTML = visible.map((item) => { const progress = Math.max(0, Number(item.progress) || 0); const total = Math.max(0, Number(item.total) || 0); const percent = total ? Math.min(100, Math.round(progress / total * 100)) : 0; const title = escapeHtml(item.title || item.slug); const image = item.image ? `<img src="${escapeHtml(item.image)}" alt="Poster ${title}" loading="lazy" onerror="this.parentElement.innerHTML='<div class=poster-fallback>Poster tidak tersedia</div>'">` : `<div class="poster-fallback">Poster tidak tersedia</div>`; return `<article class="anime-card"><div class="poster">${image}</div><div class="card-body"><strong class="card-title" title="${title}">${title}</strong><div class="progress"><span>Episode ${progress} / ${total || "?"}</span><b>${percent}%</b></div><div class="bar"><i style="width:${percent}%"></i></div><a class="button watch" href="/?anime=${encodeURIComponent(item.slug)}">Tonton dengan API ↗</a></div></article>`; }).join("");
-    }
-    function download(name, content) { const link = document.createElement("a"); link.href = URL.createObjectURL(new Blob([content], { type:"application/json" })); link.download = name; link.click(); URL.revokeObjectURL(link.href); }
-    search.addEventListener("input", render);
-    document.querySelector("#exportBtn").onclick = () => download("ilovenime-local-storage.json", JSON.stringify(items, null, 2));
-    document.querySelector("#importBtn").onclick = () => document.querySelector("#importInput").click();
-    document.querySelector("#importInput").onchange = async (event) => { const file = event.target.files[0]; if (!file) return; try { const imported = JSON.parse(await file.text()); if (!Array.isArray(imported)) throw new Error(); localStorage.setItem(KEY, JSON.stringify(imported)); items = readItems(); render(); } catch { alert("File backup tidak valid."); } event.target.value = ""; };
-    document.querySelector("#clearBtn").onclick = () => { if (!items.length || confirm("Hapus semua anime dari local storage browser ini?")) { localStorage.removeItem(KEY); items = []; render(); } };
-    window.addEventListener("storage", () => { items = readItems(); render(); });
-    items = readItems(); render();
-  </script>
-</body>
-</html>
+<body class="bg-[#08080a] text-zinc-100 min-h-screen flex flex-col items-center p-0 md:p-6 overflow-x-hidden font-sans select-none scroll-smooth">
+<!-- Floating Feedback Toast -->
+<div class="fixed top-6 z-50 pointer-events-none opacity-0 -translate-y-4 px-4 py-2.5 rounded-lg bg-zinc-900/95 border border-red-500/50 shadow-2xl shadow-red-950/50 backdrop-blur-md flex items-center gap-2.5 text-xs text-zinc-200 font-medium" id="toast-notification">
+<span class="w-2 h-2 rounded-full bg-red-500 animate-pulse"></span>
+<span id="toast-message">Memproses tindakan...</span>
+</div>
+<!-- BEGIN: MainFrameContainer -->
+<!-- 16:9 Aspect Ratio Desktop Layout Mockup inspired by reference image -->
+<div class="relative w-full max-w-[1400px] min-h-screen bg-black rounded-none md:rounded-2xl overflow-hidden shadow-2xl shadow-black/80 border border-zinc-800/60 flex flex-col justify-between">
+<!-- BEGIN: VisualBackground -->
+<!-- Darkened layered background using Hyouta image with gentle ambient floating -->
+<div class="absolute inset-0 z-0 overflow-hidden">
+<!-- Hyouta Background Image -->
+<img alt="Hyouta Anime Maintenance Background" class="w-full h-full object-cover object-center filter grayscale contrast-125 opacity-40 scale-105 transition-transform duration-1000 ease-out animate-bg-float will-change-transform" src="/assets/hyouta.jpg"/>
+<!-- Vignette and Dark Gradients for contrast -->
+<div class="absolute inset-0 bg-radial from-transparent via-[#08080a]/80 to-[#050507]"></div>
+<div class="absolute inset-0 bg-gradient-to-r from-[#08080a] via-transparent to-[#08080a]/95"></div>
+<div class="absolute inset-0 bg-gradient-to-t from-[#08080a] via-[#08080a]/60 to-transparent"></div>
+<!-- Aesthetic CRT subtle scanlines -->
+<div class="absolute inset-0 scanlines opacity-40 pointer-events-none"></div>
+<!-- Floating Petals / Particles aesthetic mimicking the beauty reference with staggered delays -->
+<div class="absolute top-1/4 left-1/3 w-3 h-3 bg-red-600/70 rounded-full blur-[1px] animate-particle" style="animation-delay: 0s; animation-duration: 6.5s;"></div>
+<div class="absolute top-1/2 left-2/3 w-4 h-2 bg-red-500/50 rounded-full blur-[1px] animate-particle" style="animation-delay: 2.2s; animation-duration: 7.2s;"></div>
+<div class="absolute bottom-1/3 left-1/2 w-2 h-2 bg-white/60 rounded-full blur-[0.5px] animate-particle" style="animation-delay: 4.1s; animation-duration: 8.5s;"></div>
+<div class="absolute top-1/3 right-1/4 w-3 h-2 bg-rose-500/60 rounded-full blur-[1px] animate-particle" style="animation-delay: 1.5s; animation-duration: 6s;"></div>
+<div class="absolute bottom-1/4 right-1/3 w-2.5 h-2 bg-red-400/40 rounded-full blur-[1px] animate-particle" style="animation-delay: 3.3s; animation-duration: 7.8s;"></div>
+<div class="absolute top-2/3 left-1/5 w-2 h-2 bg-rose-300/50 rounded-full blur-[0.5px] animate-particle" style="animation-delay: 5s; animation-duration: 9s;"></div>
+</div>
+<!-- END: VisualBackground -->
+<!-- BEGIN: HeaderSection -->
+<header class="relative z-20 px-8 py-6 md:px-12 md:py-8 flex items-center justify-between">
+<!-- Left: Minimalist Hamburger Menu -->
+<button aria-label="Menu" class="group flex flex-col gap-1.5 p-2 focus:outline-none transition-transform active:scale-90" onclick="showToast('Menu samping dibuka')">
+<span class="w-7 h-[2px] bg-zinc-300 transition-all duration-300 group-hover:w-9 group-hover:bg-white group-hover:shadow-[0_0_8px_rgba(255,255,255,0.8)]"></span>
+<span class="w-4 h-[2px] bg-zinc-400 transition-all duration-300 group-hover:w-9 group-hover:bg-red-500 group-hover:shadow-[0_0_8px_rgba(239,68,68,0.8)]"></span>
+</button>
+<!-- Center: Brand Logo -->
+<div class="flex flex-col items-center group cursor-pointer">
+<a class="tracking-tighter font-extrabold text-2xl md:text-3xl font-display uppercase tracking-widest text-white flex items-center gap-1 transition-transform duration-300 group-hover:scale-105" href="#">
+          iLove<span class="text-red-500 underline decoration-red-500/60 decoration-2 underline-offset-4 transition-colors group-hover:text-red-400">Nime</span>
+</a>
+<span class="text-[9px] tracking-[0.35em] text-zinc-400 uppercase font-medium mt-0.5 transition-colors group-hover:text-zinc-200">Streaming &amp; ENJOY</span>
+</div>
+<!-- Right: Search & Profile Icons -->
+<div class="flex items-center gap-5 text-zinc-300">
+<button aria-label="Search" class="hover:text-white transition-colors p-1.5 hover:bg-zinc-800/40 rounded-full">
+</button>
+<button aria-label="User Account" class="hover:text-white transition-colors p-1.5 hover:bg-zinc-800/40 rounded-full">
+</button>
+</div>
+</header>
+<!-- END: HeaderSection -->
+<!-- BEGIN: MainContent -->
+<main class="relative z-20 flex-1 flex flex-col justify-center items-center px-6 text-center py-20 min-h-[640px]">
+<!-- Atmospheric Tag / Status Pill -->
+<div class="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-zinc-900/80 border border-zinc-700/60 backdrop-blur-md mb-6 hover:border-red-500/50 hover:bg-zinc-900 transition-all duration-300 shadow-sm hover:shadow-[0_0_15px_rgba(239,68,68,0.2)]">
+<span class="relative flex h-2 w-2">
+<span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-red-400 opacity-75"></span>
+<span class="relative inline-flex rounded-full h-2 w-2 bg-red-500 shadow-[0_0_6px_#ef4444]"></span>
+</span>
+<span class="text-xs uppercase tracking-[0.25em] font-semibold text-zinc-300">System Upgrade in Progress</span>
+</div>
+<!-- Hero Heading Inspired by 404 Layout -->
+<div class="relative group">
+<h1 class="text-5xl sm:text-7xl md:text-8xl lg:text-9xl font-black font-display tracking-tight text-white/95 uppercase select-none text-glow text-glow-animated leading-none cursor-default transition-all duration-300 hover:scale-[1.01]">
+          MAINTENANCE
+        </h1>
+<!-- Vertical Accent Text on Right Border of Text -->
+<span class="hidden md:block absolute -right-8 top-1/2 -translate-y-1/2 rotate-90 text-[10px] tracking-[0.3em] font-semibold text-red-500 uppercase whitespace-nowrap drop-shadow-[0_0_8px_rgba(239,68,68,0.6)] animate-pulse">
+          SERVER REVAMP • V2.1
+        </span>
+</div>
+<!-- Clear Headline Subtitle -->
+<h2 class="mt-4 md:mt-6 text-lg sm:text-xl md:text-2xl font-medium text-zinc-200 tracking-wide max-w-2xl">
+        Web sedang dalam <span class="text-white font-bold border-b-2 border-red-500 pb-0.5 hover:border-red-400 transition-colors">perbaikan dan upgrade</span>
+</h2>
+<!-- Friendly Note Requested in Prompt -->
+<p class="mt-3 text-sm md:text-base text-zinc-400 font-light flex items-center justify-center gap-2">
+<span class="">Anime yang tersimpan masih bisa di tonton secara normal.</span>
+<span class="text-lg inline-block hover:rotate-12 transition-transform cursor-pointer" title="Senyum dulu">😊</span>
+</p>
+<!-- Action Buttons Container -->
+<div class="mt-8 md:mt-10 flex flex-wrap items-center justify-center gap-4">
+<!-- Local Storage / Watch Offline CTA with smooth sliding chevron & neon border -->
+<a class="px-8 py-3.5 text-xs md:text-sm font-semibold tracking-[0.2em] uppercase text-zinc-200 bg-zinc-900/90 border border-zinc-700/80 hover:border-red-500 hover:text-white transition-all duration-300 rounded-sm backdrop-blur-sm flex items-center gap-2.5 group shadow-lg hover:shadow-[0_0_20px_rgba(239,68,68,0.35)] hover:scale-105 active:scale-95 cursor-pointer" href="#storage">
+<svg class="w-4 h-4 text-red-500 group-hover:scale-120 group-hover:rotate-6 transition-all duration-300" fill="currentColor" viewbox="0 0 24 24">
+<path d="M4 6a2 2 0 0 1 2-2h12a2 2 0 0 1 2 2v12a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V6zm2 0v12h12V6H6zm2 2h8v2H8V8zm0 4h8v2H8v-2z"></path>
+</svg>
+<span>Buka Storage Lokal</span>
+<svg class="w-3.5 h-3.5 text-zinc-400 group-hover:text-red-400 transform group-hover:translate-x-1.5 transition-all duration-300" fill="none" stroke="currentColor" stroke-width="2" viewbox="0 0 24 24">
+<path d="M19.5 8.25l-7.5 7.5-7.5-7.5" stroke-linecap="round" stroke-linejoin="round"></path>
+</svg>
+</a>
+</div>
+</main>
+<!-- END: MainContent -->
+<!-- BEGIN: FooterSection -->
+<section class="relative z-20 w-full border-t border-zinc-800/80 bg-zinc-950/90 backdrop-blur-md px-6 py-10 md:px-12 md:py-12 flex flex-col gap-8 scroll-mt-6" id="storage">
+<!-- Header Section -->
+<div class="flex flex-col md:flex-row md:items-center justify-between gap-4 border-b border-zinc-800/60 pb-6">
+<div class="flex items-start gap-3.5">
+<div class="w-1.5 h-12 bg-red-600 rounded-full mt-0.5 shadow-[0_0_14px_rgba(230,57,70,0.8)] animate-pulse"></div>
+<div>
+<div class="flex items-center gap-3">
+<h2 class="text-2xl md:text-3xl font-black font-display tracking-wide uppercase text-white">Local Storage</h2>
+<span class="px-2.5 py-0.5 text-[10px] font-bold tracking-wider uppercase rounded-full bg-emerald-500/10 text-emerald-400 border border-emerald-500/30 flex items-center gap-1.5 glow-green-pulse">
+<span class="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse"></span>
+            maintenance Mode
+          </span>
+</div>
+<p class="text-xs md:text-sm text-zinc-400 mt-1 font-light">
+<span class="text-zinc-200 font-medium">tersimpan(unknown)</span> • Browser IndexedDB Cache Storage
+        </p>
+</div>
+</div>
+<!-- Actions with tactile hover & active states -->
+<div class="flex items-center flex-wrap gap-2.5">
+<button class="px-3.5 py-2 text-xs font-semibold tracking-wider uppercase text-zinc-300 bg-zinc-900/90 border border-zinc-700/70 hover:border-zinc-400 hover:text-white rounded transition-all duration-200 flex items-center gap-2 group hover:shadow-[0_0_12px_rgba(255,255,255,0.1)] active:scale-95" onclick="showToast('Menyiapkan file export backup data lokal...')" type="button">
+<svg class="w-3.5 h-3.5 text-zinc-400 group-hover:text-white group-hover:-translate-y-0.5 transition-transform" fill="none" stroke="currentColor" stroke-width="2" viewbox="0 0 24 24"><path d="M3 16.5v2.25A2.25 2.25 0 0 0 5.25 21h13.5A2.25 2.25 0 0 0 21 18.75V16.5M16.5 12 12 16.5m0 0L7.5 12m4.5 4.5V3" stroke-linecap="round" stroke-linejoin="round"></path></svg>
+        Export
+      </button>
+<button class="px-3.5 py-2 text-xs font-semibold tracking-wider uppercase text-zinc-300 bg-zinc-900/90 border border-zinc-700/70 hover:border-zinc-400 hover:text-white rounded transition-all duration-200 flex items-center gap-2 group hover:shadow-[0_0_12px_rgba(255,255,255,0.1)] active:scale-95" onclick="triggerImport()" type="button">
+<svg class="w-3.5 h-3.5 text-zinc-400 group-hover:text-white group-hover:-translate-y-0.5 transition-transform" fill="none" stroke="currentColor" stroke-width="2" viewbox="0 0 24 24"><path d="M3 16.5v2.25A2.25 2.25 0 0 0 5.25 21h13.5A2.25 2.25 0 0 0 21 18.75V16.5m-13.5-9L12 3m0 0 4.5 4.5M12 3v13.5" stroke-linecap="round" stroke-linejoin="round"></path></svg>
+        Import
+      </button>
+<button class="px-3.5 py-2 text-xs font-semibold tracking-wider uppercase text-red-400 bg-red-950/30 border border-red-900/50 hover:bg-red-900/40 hover:text-red-300 hover:border-red-600 rounded transition-all duration-200 flex items-center gap-2 group hover:shadow-[0_0_15px_rgba(239,68,68,0.25)] active:scale-95" onclick="showToast('Data lokal cache berhasil dibersihkan')" type="button">
+<svg class="w-3.5 h-3.5 group-hover:rotate-12 transition-transform" fill="none" stroke="currentColor" stroke-width="2" viewbox="0 0 24 24"><path d="m14.74 9-.346 9m-4.788 0L9.26 9m9.968-3.21c.342.052.682.107 1.022.166m-1.022-.165L18.16 19.673a2.25 2.25 0 0 1-2.244 2.077H8.084a2.25 2.25 0 0 1-2.244-2.077L4.772 5.79m14.456 0a48.108 48.108 0 0 0-3.478-.397m-12 .562c.34-.059.68-.114 1.022-.165m0 0a48.11 48.11 0 0 1 3.478-.397m7.5 0v-.916c0-1.18-.91-2.164-2.09-2.201a51.964 51.964 0 0 0-3.32 0c-1.18.037-2.09 1.022-2.09 2.201v.916m7.5 0a48.667 48.667 0 0 0-7.5 0" stroke-linecap="round" stroke-linejoin="round"></path></svg>
+        Hapus Data Lokal
+      </button>
+</div>
+</div>
+<!-- 5-Slot Grid Container with staggered animation -->
+<div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-4">
+<!-- Slot #01 -->
+<div class="slot-card-animated group bg-zinc-900/60 border border-zinc-800/80 hover:border-red-500/80 rounded-lg p-4 flex flex-col justify-between transition-all duration-300 hover:-translate-y-1.5 hover:shadow-xl hover:shadow-red-950/30" style="animation-delay: 100ms;">
+<div>
+<div class="flex items-center justify-between pb-3 mb-3 border-b border-zinc-800/60">
+<span class="text-[11px] font-mono font-bold tracking-wider text-zinc-400 group-hover:text-red-400 uppercase transition-colors">Slot #01</span>
+<span class="w-2 h-2 rounded-full bg-zinc-600 group-hover:bg-red-500 group-hover:shadow-[0_0_6px_#ef4444] transition-all"></span>
+</div>
+<div class="border-2 border-dashed border-zinc-800 group-hover:border-red-500/40 rounded-md py-10 flex flex-col items-center justify-center text-center gap-2 bg-zinc-950/40 transition-colors">
+<svg class="w-8 h-8 text-zinc-600 group-hover:text-red-500/90 group-hover:scale-110 transition-all duration-300" fill="none" stroke="currentColor" stroke-width="1.5" viewbox="0 0 24 24"><path d="m2.25 15.75 5.159-5.159a2.25 2.25 0 0 1 3.182 0l5.159 5.159m-1.5-1.5 1.409-1.409a2.25 2.25 0 0 1 3.182 0l2.909 2.909m-18 3.75h16.5a1.5 1.5 0 0 0 1.5-1.5V6a1.5 1.5 0 0 0-1.5-1.5H3.75A1.5 1.5 0 0 0 2.25 6v12a1.5 1.5 0 0 0 1.5 1.5Zm10.5-11.25h.008v.008h-.008V8.25Zm.375 0a.375.375 0 1 1-.75 0 .375.375 0 0 1 .75 0Z" stroke-linecap="round" stroke-linejoin="round"></path></svg>
+<span class="text-xs text-zinc-500 group-hover:text-zinc-400 font-medium transition-colors">Kosong / Belum ada media</span>
+</div>
+</div>
+<button class="mt-4 w-full py-2 text-xs font-semibold tracking-wider uppercase text-zinc-300 bg-zinc-800/60 hover:bg-red-600 hover:text-white border border-zinc-700/60 hover:border-red-600 rounded transition-all duration-200 flex items-center justify-center gap-1.5 active:scale-95 hover:shadow-[0_0_12px_rgba(239,68,68,0.4)] group/btn" onclick="triggerSlot(1)" type="button">
+<span class="inline-block transition-transform duration-200 group-hover/btn:rotate-90 group-hover/btn:scale-125">+</span> Isi Slot
+      </button>
+</div>
+<!-- Slot #02 -->
+<div class="slot-card-animated group bg-zinc-900/60 border border-zinc-800/80 hover:border-red-500/80 rounded-lg p-4 flex flex-col justify-between transition-all duration-300 hover:-translate-y-1.5 hover:shadow-xl hover:shadow-red-950/30" style="animation-delay: 200ms;">
+<div>
+<div class="flex items-center justify-between pb-3 mb-3 border-b border-zinc-800/60">
+<span class="text-[11px] font-mono font-bold tracking-wider text-zinc-400 group-hover:text-red-400 uppercase transition-colors">Slot #02</span>
+<span class="w-2 h-2 rounded-full bg-zinc-600 group-hover:bg-red-500 group-hover:shadow-[0_0_6px_#ef4444] transition-all"></span>
+</div>
+<div class="border-2 border-dashed border-zinc-800 group-hover:border-red-500/40 rounded-md py-10 flex flex-col items-center justify-center text-center gap-2 bg-zinc-950/40 transition-colors">
+<svg class="w-8 h-8 text-zinc-600 group-hover:text-red-500/90 group-hover:scale-110 transition-all duration-300" fill="none" stroke="currentColor" stroke-width="1.5" viewbox="0 0 24 24"><path d="m2.25 15.75 5.159-5.159a2.25 2.25 0 0 1 3.182 0l5.159 5.159m-1.5-1.5 1.409-1.409a2.25 2.25 0 0 1 3.182 0l2.909 2.909m-18 3.75h16.5a1.5 1.5 0 0 0 1.5-1.5V6a1.5 1.5 0 0 0-1.5-1.5H3.75A1.5 1.5 0 0 0 2.25 6v12a1.5 1.5 0 0 0 1.5 1.5Zm10.5-11.25h.008v.008h-.008V8.25Zm.375 0a.375.375 0 1 1-.75 0 .375.375 0 0 1 .75 0Z" stroke-linecap="round" stroke-linejoin="round"></path></svg>
+<span class="text-xs text-zinc-500 group-hover:text-zinc-400 font-medium transition-colors">Kosong / Belum ada media</span>
+</div>
+</div>
+<button class="mt-4 w-full py-2 text-xs font-semibold tracking-wider uppercase text-zinc-300 bg-zinc-800/60 hover:bg-red-600 hover:text-white border border-zinc-700/60 hover:border-red-600 rounded transition-all duration-200 flex items-center justify-center gap-1.5 active:scale-95 hover:shadow-[0_0_12px_rgba(239,68,68,0.4)] group/btn" onclick="triggerSlot(2)" type="button">
+<span class="inline-block transition-transform duration-200 group-hover/btn:rotate-90 group-hover/btn:scale-125">+</span> Isi Slot
+      </button>
+</div>
+<!-- Slot #03 -->
+<div class="slot-card-animated group bg-zinc-900/60 border border-zinc-800/80 hover:border-red-500/80 rounded-lg p-4 flex flex-col justify-between transition-all duration-300 hover:-translate-y-1.5 hover:shadow-xl hover:shadow-red-950/30" style="animation-delay: 300ms;">
+<div>
+<div class="flex items-center justify-between pb-3 mb-3 border-b border-zinc-800/60">
+<span class="text-[11px] font-mono font-bold tracking-wider text-zinc-400 group-hover:text-red-400 uppercase transition-colors">Slot #03</span>
+<span class="w-2 h-2 rounded-full bg-zinc-600 group-hover:bg-red-500 group-hover:shadow-[0_0_6px_#ef4444] transition-all"></span>
+</div>
+<div class="border-2 border-dashed border-zinc-800 group-hover:border-red-500/40 rounded-md py-10 flex flex-col items-center justify-center text-center gap-2 bg-zinc-950/40 transition-colors">
+<svg class="w-8 h-8 text-zinc-600 group-hover:text-red-500/90 group-hover:scale-110 transition-all duration-300" fill="none" stroke="currentColor" stroke-width="1.5" viewbox="0 0 24 24"><path d="m2.25 15.75 5.159-5.159a2.25 2.25 0 0 1 3.182 0l5.159 5.159m-1.5-1.5 1.409-1.409a2.25 2.25 0 0 1 3.182 0l2.909 2.909m-18 3.75h16.5a1.5 1.5 0 0 0 1.5-1.5V6a1.5 1.5 0 0 0-1.5-1.5H3.75A1.5 1.5 0 0 0 2.25 6v12a1.5 1.5 0 0 0 1.5 1.5Zm10.5-11.25h.008v.008h-.008V8.25Zm.375 0a.375.375 0 1 1-.75 0 .375.375 0 0 1 .75 0Z" stroke-linecap="round" stroke-linejoin="round"></path></svg>
+<span class="text-xs text-zinc-500 group-hover:text-zinc-400 font-medium transition-colors">Kosong / Belum ada media</span>
+</div>
+</div>
+<button class="mt-4 w-full py-2 text-xs font-semibold tracking-wider uppercase text-zinc-300 bg-zinc-800/60 hover:bg-red-600 hover:text-white border border-zinc-700/60 hover:border-red-600 rounded transition-all duration-200 flex items-center justify-center gap-1.5 active:scale-95 hover:shadow-[0_0_12px_rgba(239,68,68,0.4)] group/btn" onclick="triggerSlot(3)" type="button">
+<span class="inline-block transition-transform duration-200 group-hover/btn:rotate-90 group-hover/btn:scale-125">+</span> Isi Slot
+      </button>
+</div>
+<!-- Slot #04 -->
+<div class="slot-card-animated group bg-zinc-900/60 border border-zinc-800/80 hover:border-red-500/80 rounded-lg p-4 flex flex-col justify-between transition-all duration-300 hover:-translate-y-1.5 hover:shadow-xl hover:shadow-red-950/30" style="animation-delay: 400ms;">
+<div>
+<div class="flex items-center justify-between pb-3 mb-3 border-b border-zinc-800/60">
+<span class="text-[11px] font-mono font-bold tracking-wider text-zinc-400 group-hover:text-red-400 uppercase transition-colors">Slot #04</span>
+<span class="w-2 h-2 rounded-full bg-zinc-600 group-hover:bg-red-500 group-hover:shadow-[0_0_6px_#ef4444] transition-all"></span>
+</div>
+<div class="border-2 border-dashed border-zinc-800 group-hover:border-red-500/40 rounded-md py-10 flex flex-col items-center justify-center text-center gap-2 bg-zinc-950/40 transition-colors">
+<svg class="w-8 h-8 text-zinc-600 group-hover:text-red-500/90 group-hover:scale-110 transition-all duration-300" fill="none" stroke="currentColor" stroke-width="1.5" viewbox="0 0 24 24"><path d="m2.25 15.75 5.159-5.159a2.25 2.25 0 0 1 3.182 0l5.159 5.159m-1.5-1.5 1.409-1.409a2.25 2.25 0 0 1 3.182 0l2.909 2.909m-18 3.75h16.5a1.5 1.5 0 0 0 1.5-1.5V6a1.5 1.5 0 0 0-1.5-1.5H3.75A1.5 1.5 0 0 0 2.25 6v12a1.5 1.5 0 0 0 1.5 1.5Zm10.5-11.25h.008v.008h-.008V8.25Zm.375 0a.375.375 0 1 1-.75 0 .375.375 0 0 1 .75 0Z" stroke-linecap="round" stroke-linejoin="round"></path></svg>
+<span class="text-xs text-zinc-500 group-hover:text-zinc-400 font-medium transition-colors">Kosong / Belum ada media</span>
+</div>
+</div>
+<button class="mt-4 w-full py-2 text-xs font-semibold tracking-wider uppercase text-zinc-300 bg-zinc-800/60 hover:bg-red-600 hover:text-white border border-zinc-700/60 hover:border-red-600 rounded transition-all duration-200 flex items-center justify-center gap-1.5 active:scale-95 hover:shadow-[0_0_12px_rgba(239,68,68,0.4)] group/btn" onclick="triggerSlot(4)" type="button">
+<span class="inline-block transition-transform duration-200 group-hover/btn:rotate-90 group-hover/btn:scale-125">+</span> Isi Slot
+      </button>
+</div>
+<!-- Slot #05 -->
+<div class="slot-card-animated group bg-zinc-900/60 border border-zinc-800/80 hover:border-red-500/80 rounded-lg p-4 flex flex-col justify-between transition-all duration-300 hover:-translate-y-1.5 hover:shadow-xl hover:shadow-red-950/30" style="animation-delay: 500ms;">
+<div>
+<div class="flex items-center justify-between pb-3 mb-3 border-b border-zinc-800/60">
+<span class="text-[11px] font-mono font-bold tracking-wider text-zinc-400 group-hover:text-red-400 uppercase transition-colors">Slot #05</span>
+<span class="w-2 h-2 rounded-full bg-zinc-600 group-hover:bg-red-500 group-hover:shadow-[0_0_6px_#ef4444] transition-all"></span>
+</div>
+<div class="border-2 border-dashed border-zinc-800 group-hover:border-red-500/40 rounded-md py-10 flex flex-col items-center justify-center text-center gap-2 bg-zinc-950/40 transition-colors">
+<svg class="w-8 h-8 text-zinc-600 group-hover:text-red-500/90 group-hover:scale-110 transition-all duration-300" fill="none" stroke="currentColor" stroke-width="1.5" viewbox="0 0 24 24"><path d="m2.25 15.75 5.159-5.159a2.25 2.25 0 0 1 3.182 0l5.159 5.159m-1.5-1.5 1.409-1.409a2.25 2.25 0 0 1 3.182 0l2.909 2.909m-18 3.75h16.5a1.5 1.5 0 0 0 1.5-1.5V6a1.5 1.5 0 0 0-1.5-1.5H3.75A1.5 1.5 0 0 0 2.25 6v12a1.5 1.5 0 0 0 1.5 1.5Zm10.5-11.25h.008v.008h-.008V8.25Zm.375 0a.375.375 0 1 1-.75 0 .375.375 0 0 1 .75 0Z" stroke-linecap="round" stroke-linejoin="round"></path></svg>
+<span class="text-xs text-zinc-500 group-hover:text-zinc-400 font-medium transition-colors">Kosong / Belum ada media</span>
+</div>
+</div>
+<button class="mt-4 w-full py-2 text-xs font-semibold tracking-wider uppercase text-zinc-300 bg-zinc-800/60 hover:bg-red-600 hover:text-white border border-zinc-700/60 hover:border-red-600 rounded transition-all duration-200 flex items-center justify-center gap-1.5 active:scale-95 hover:shadow-[0_0_12px_rgba(239,68,68,0.4)] group/btn" onclick="triggerSlot(5)" type="button">
+<span class="inline-block transition-transform duration-200 group-hover/btn:rotate-90 group-hover/btn:scale-125">+</span> Isi Slot
+      </button>
+</div>
+</div>
+</section><footer class="relative z-20 px-8 py-6 md:px-12 md:py-8 flex flex-col sm:flex-row items-center justify-between gap-4 border-t border-zinc-900/60 bg-gradient-to-t from-black/80 to-transparent">
+<!-- Left: Quick Navigation Indicator & Home Icon -->
+<div class="flex items-center gap-4 text-zinc-500 text-xs">
+<a aria-label="Home" class="text-zinc-400 hover:text-white hover:scale-110 transition-all duration-200 p-1 rounded-md hover:bg-zinc-800/50" href="/">
+<svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2" viewbox="0 0 24 24">
+<path d="m2.25 12 8.954-8.955c.44-.439 1.152-.439 1.591 0L21.75 12M4.5 9.75v10.125c0 .621.504 1.125 1.125 1.125H9.75v-4.875c0-.621.504-1.125 1.125-1.125h2.25c.621 0 1.125.504 1.125 1.125V21h4.125c.621 0 1.125-.504 1.125-1.125V9.75M8.25 21h8.25" stroke-linecap="round" stroke-linejoin="round"></path>
+</svg>
+</a>
+<span class="w-1 h-1 rounded-full bg-zinc-700"></span>
+<div class="flex items-center gap-2 text-zinc-400">
+<span class="relative flex h-2 w-2">
+<span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75"></span>
+<span class="relative inline-flex rounded-full h-2 w-2 bg-emerald-500 shadow-[0_0_8px_#10b981]"></span>
+</span>
+<span class="tracking-wider uppercase text-[11px] font-mono">CDN Offline Cache: Ready</span>
+</div>
+</div>
+<!-- Center: Pagination / Status Dots from reference layout -->
+<div class="hidden md:flex items-center gap-2">
+<span class="w-6 h-1 rounded-full bg-red-600 shadow-[0_0_8px_rgba(220,38,38,0.8)]"></span>
+<span class="w-1.5 h-1 rounded-full bg-zinc-700 transition-colors hover:bg-zinc-500 cursor-pointer"></span>
+<span class="w-1.5 h-1 rounded-full bg-zinc-700 transition-colors hover:bg-zinc-500 cursor-pointer"></span>
+</div>
+<!-- Right: Social & Functional Icons (Donation, GitHub, Storage Status) -->
+<div class="flex items-center gap-5 text-zinc-400">
+<!-- Donation Link with Heartbeat pulse effect -->
+<a aria-label="Donasi Server" class="flex items-center gap-1.5 text-xs hover:text-red-400 transition-colors group p-1" href="https://sociabuzz.com/neonishikawa/tribe" rel="noopener noreferrer" target="_blank" title="Dukung Server (Donasi / Trakteer)">
+<svg class="w-4 h-4 text-red-500 animate-heart-pulse group-hover:scale-125 transition-transform" fill="currentColor" viewbox="0 0 24 24">
+<path d="m11.645 20.91-.007-.003-.022-.012a15.247 15.247 0 0 1-.383-.218 25.18 25.18 0 0 1-4.244-3.17C4.688 15.36 2.25 12.174 2.25 8.25 2.25 5.322 4.714 3 7.688 3A5.5 5.5 0 0 1 12 5.052 5.5 5.5 0 0 1 16.313 3c2.973 0 5.437 2.322 5.437 5.25 0 3.925-2.438 7.111-4.739 9.256a25.175 25.175 0 0 1-4.244 3.17 15.247 15.247 0 0 1-.383.219l-.022.012-.007.004-.003.001a.752.752 0 0 1-.704 0l-.003-.001Z"></path>
+</svg>
+<span class="text-[11px] font-semibold tracking-wider uppercase hidden sm:inline group-hover:underline decoration-red-500/70">Donasi</span>
+</a>
+<!-- GitHub Repository Icon -->
+<a aria-label="GitHub Repository" class="hover:text-white hover:scale-110 transition-all duration-200 p-1" href="https://github.com" rel="noopener noreferrer" target="_blank" title="Source Code &amp; Status GitHub">
+<svg class="w-4 h-4" fill="currentColor" viewbox="0 0 24 24">
+<path clip-rule="evenodd" d="M12 2C6.477 2 2 6.484 2 12.017c0 4.425 2.865 8.18 6.839 9.504.5.092.682-.217.682-.483 0-.237-.008-.868-.013-1.703-2.782.605-3.369-1.343-3.369-1.343-.454-1.158-1.11-1.466-1.11-1.466-.908-.62.069-.608.069-.608 1.003.07 1.53 1.032 1.53 1.032.892 1.53 2.341 1.088 2.91.832.092-.647.35-1.088.636-1.338-2.22-.253-4.555-1.113-4.555-4.951 0-1.093.39-1.988 1.029-2.688-.103-.253-.446-1.272.098-2.65 0 0 .84-.27 2.75 1.026A9.564 9.564 0 0112 6.844c.85.004 1.705.115 2.504.337 1.909-1.296 2.747-1.027 2.747-1.027.546 1.379.202 2.398.1 2.651.64.7 1.028 1.595 1.028 2.688 0 3.848-2.339 4.695-4.566 4.943.359.309.678.92.678 1.855 0 1.338-.012 2.419-.012 2.747 0 .268.18.58.688.482A10.019 10.019 0 0022 12.017C22 6.484 17.522 2 12 2Z" fill-rule="evenodd"></path>
+</svg>
+</a>
+<!-- Storage Player / Server Indicator -->
+<a aria-label="Storage Player Offline" class="hover:text-emerald-400 hover:scale-110 transition-all duration-200 flex items-center gap-1 p-1" href="#storage" title="storage Maintenace mode">
+<svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2" viewbox="0 0 24 24">
+<path d="M5.25 14.25h13.5m-13.5 3h13.5m-9.75 3h6m3-16.5H5.25A2.25 2.25 0 0 0 3 6v10.5A2.25 2.25 0 0 0 5.25 18.75h13.5A2.25 2.25 0 0 0 21 16.5V6a2.25 2.25 0 0 0-2.25-2.25Z" stroke-linecap="round" stroke-linejoin="round"></path>
+</svg>
+</a>
+</div>
+</footer>
+<!-- END: FooterSection -->
+</div>
+<!-- END: MainFrameContainer -->
+<script>
+  // Toast Notification Controller
+  let toastTimer = null;
+  function showToast(message) {
+    const toast = document.getElementById('toast-notification');
+    const toastMsg = document.getElementById('toast-message');
+    if (!toast || !toastMsg) return;
+
+    toastMsg.textContent = message;
+    toast.classList.remove('opacity-0', '-translate-y-4');
+    toast.classList.add('opacity-100', 'translate-y-0');
+
+    if (toastTimer) clearTimeout(toastTimer);
+    toastTimer = setTimeout(() => {
+      toast.classList.remove('opacity-100', 'translate-y-0');
+      toast.classList.add('opacity-0', '-translate-y-4');
+    }, 3200);
+  }
+
+  function triggerSlot(slotNum) {
+    showToast(`Pilih file video atau anime untuk Slot #${slotNum < 10 ? '0' + slotNum : slotNum}...`);
+  }
+
+  function triggerImport() {
+    showToast('Buka file JSON backup / video offline lokal...');
+  }
+</script>
+</body></html>
