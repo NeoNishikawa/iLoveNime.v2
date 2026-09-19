@@ -27,15 +27,16 @@ export const api = {
   trending: () => request("/api/trending"),
   genres: () => request("/api/genres"),
   cancelCatalog() { activeCatalogController?.abort(); activeCatalogController = null; },
-  catalog(query, genre) {
+  catalog(query, genres = [], genreMode = "or") {
     const normalizedQuery = String(query || "").trim();
-    const normalizedGenre = String(genre || "").trim();
-    const key = `${normalizedQuery.toLocaleLowerCase()}|${normalizedGenre.toLocaleLowerCase()}`;
+    const normalizedGenres = (Array.isArray(genres) ? genres : [genres]).map((genre) => String(genre || "").trim().toLowerCase()).filter(Boolean).sort();
+    const normalizedMode = genreMode === "and" ? "and" : "or";
+    const key = `${normalizedQuery.toLocaleLowerCase()}|${normalizedGenres.join(",")}|${normalizedMode}`;
     if (cache.has(key)) return cache.get(key);
     activeCatalogController?.abort();
     const controller = new AbortController();
     activeCatalogController = controller;
-    const params = new URLSearchParams({ search: normalizedQuery, genre: normalizedGenre });
+    const params = new URLSearchParams({ search: normalizedQuery, genres: normalizedGenres.join(","), genreMode: normalizedMode });
     const pending = cachedRequest(key, `/api/catalog?${params}`, { signal: controller.signal }).finally(() => {
       if (activeCatalogController === controller) activeCatalogController = null;
     });

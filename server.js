@@ -8,6 +8,8 @@ const { ANIMASU_BASE_URL, PORT, REQUEST_TIMEOUT_MS, SEARCH_BUDGET_MS, DAILY_CACH
 
 process.env.ANIMASU_BASE_URL = ANIMASU_BASE_URL;
 const { animasu } = require("yaoi");
+const ANILIST_GRAPHQL_URL = process.env.ANILIST_GRAPHQL_URL || "https://graphql.anilist.co";
+const ANILIST_TIMEOUT_MS = Number(process.env.ANILIST_TIMEOUT_MS) > 0 ? Number(process.env.ANILIST_TIMEOUT_MS) : 8000;
 axios.defaults.timeout = REQUEST_TIMEOUT_MS;
 
 const app = express();
@@ -493,6 +495,20 @@ async function fetchAnimeDetail(slug) {
   return detail;
 }
 
+async function fetchAniListMetadata(title) {
+  const query = `query ($search: String) { Media(search: $search, type: ANIME) { id title { romaji english native } description(asHtml: false) genres studios { nodes { name } } episodes format status duration averageScore } }`;
+  const controller = new AbortController();
+  const timer = setTimeout(() => controller.abort(), ANILIST_TIMEOUT_MS);
+  try {
+    const result = await fetch(ANILIST_GRAPHQL_URL, { method: "POST", headers: { "content-type": "application/json", accept: "application/json" }, body: JSON.stringify({ query, variables: { search: title } }), signal: controller.signal });
+    if (!result.ok) throw new Error(`AniList HTTP ${result.status}`);
+    const body = await result.json();
+    if (body.errors?.length || !body.data?.Media) throw new Error(body.errors?.[0]?.message || "AniList tidak menemukan metadata.");
+    const media = body.data.Media;
+    return { id: media.id, title: media.title, synopsis: media.description || "", genres: media.genres || [], studios: (media.studios?.nodes || []).map((studio) => studio.name), episodes: media.episodes || 0, format: media.format || "", status: media.status || "", duration: media.duration || 0, averageScore: media.averageScore || 0 };
+  } finally { clearTimeout(timer); }
+}
+
 async function fetchCatalogPage({ search = "", genre = "", page = 1, signal }) {
   const paths = search ? [`/page/${page}/`, "/pencarian/"] : ["/pencarian/"];
   let lastError;
@@ -598,39 +614,48 @@ async function collectCatalog(search, genre, signal) {
   return { data: uniqueBySlug(found).map(titleAliasRecord), partial, provider: "animasu" };
 }
 
-async function searchCatalog(search, genre, signal) {
+function normalizeGenreFilters(value) {
+  return [...new Set(String(value || "").split(",").map((genre) => genre.trim().toLowerCase()).filter(Boolean))].slice(0, 5);
+}
+async function searchCatalog(search, genres, genreMode, signal) {
+  const filters = genres.length ? genres : [""];
   const errors = [];
-  for (const source of SOURCE_CONFIGS) {
-    try {
-      const direct = await collectCatalog(search, genre, signal, source.id);
-      if (direct.data.length || !search) return { data: direct.data, aliasUsed: "", partial: direct.partial, provider: source.id };
-    } catch (error) { errors.push(error); }
-  }
+  const collectFiltered = async (term) => {
+    const sets = [];
+    for (const genre of filters) {
+      let found = [];
+      for (const source of SOURCE_CONFIGS) {
+        try { const direct = await collectCatalog(term, genre, signal, source.id); found = direct.data; if (found.length || !term) break; } catch (error) { errors.push(error); }
+      }
+      sets.push(found);
+    }
+    if (sets.length <= 1) return sets[0] || [];
+    if (genreMode === "and") return sets[0].filter((item) => sets.every((set) => set.some((candidate) => candidate.slug === item.slug)));
+    return uniqueBySlug(sets.flat());
+  };
+  const direct = await collectFiltered(search);
+  if (direct.length || !search) return { data: direct, aliasUsed: "", partial: false, provider: "animasu" };
   const aliases = await fetchEnglishAliases(search);
   for (const alias of aliases) {
     if (signal?.aborted) throw new Error("Pencarian dibatalkan oleh client.");
-    for (const source of SOURCE_CONFIGS) {
-      try {
-        const result = await collectCatalog(alias, genre, signal, source.id);
-        if (result.data.length) return { data: result.data, aliasUsed: alias, partial: result.partial, provider: source.id };
-      } catch (error) { errors.push(error); }
-    }
+    const result = await collectFiltered(alias);
+    if (result.length) return { data: result, aliasUsed: alias, partial: false, provider: "animasu" };
   }
   if (errors.length && !SOURCE_CONFIGS.some((source) => source.id === "animasu")) throw errors.at(-1);
   return { data: [], aliasUsed: "", partial: false, provider: "none" };
 }
-
 app.get("/api/catalog", catalogRateLimit, async (request, response) => {
   const search = String(request.query.search || "").trim().slice(0, 100);
-  const genre = String(request.query.genre || "").trim().slice(0, 80);
-  const key = `catalog:${normalizeSearchText(search)}:${normalizeSearchText(genre)}`;
+  const genres = normalizeGenreFilters(request.query.genres || request.query.genre);
+  const genreMode = String(request.query.genreMode || "or").toLowerCase() === "and" ? "and" : "or";
+  const key = `catalog:${normalizeSearchText(search)}:${genres.join(",")}:${genreMode}`;
   if (search && normalizeSearchText(search).length < MIN_SEARCH_LENGTH) return response.json({ data: [], slides: [], total: 0, slideSize: SLIDE_SIZE, provider: "local", stale: false, notice: `Masukkan minimal ${MIN_SEARCH_LENGTH} karakter untuk mencari.` });
   const abortController = new AbortController();
   request.on("close", () => { if (!response.writableEnded) abortController.abort(); });
   try {
-    const result = await cached(key, () => searchCatalog(search, genre, abortController.signal));
+    const result = await cached(key, () => searchCatalog(search, genres, genreMode, abortController.signal));
     const data = result.data || [];
-    if (data.length) return response.json({ data, slides: slices(data), total: data.length, slideSize: SLIDE_SIZE, provider: result.provider || "yaoi", aliasUsed: result.aliasUsed || "", partial: Boolean(result.partial), stale: false });
+    if (data.length) return response.json({ data, slides: slices(data), total: data.length, slideSize: SLIDE_SIZE, provider: result.provider || "yaoi", aliasUsed: result.aliasUsed || "", genres, genreMode, partial: Boolean(result.partial), stale: false });
     response.json({ data: [], slides: [], total: 0, slideSize: SLIDE_SIZE, provider: result.provider || "none", aliasUsed: "", stale: false, notice: "Source merespons tetapi tidak menemukan judul yang cocok." });
   } catch (error) {
     if (abortController.signal.aborted) return;
@@ -678,7 +703,10 @@ app.get("/api/anime/:slug", apiRateLimit, async (request, response) => {
     const key = `detail:${provider}:${request.params.slug}`;
     const detail = await cached(key, () => fetchAnimeDetail(request.params.slug, provider), DETAIL_CACHE_MS, true);
     if (!detail?.title) throw new Error("detail tidak memiliki data yang valid");
-    response.json({ data: titleAliasRecord({ ...detail, episodes: normalizeEpisodes(detail.episodes || []) }), provider: detail.sourceProvider || provider, stale: isStale(key) });
+    const normalized = titleAliasRecord({ ...detail, episodes: normalizeEpisodes(detail.episodes || []) });
+    let anilist = null;
+    try { anilist = await cached(`anilist:detail:${normalizeSearchText(normalized.title)}`, () => fetchAniListMetadata(normalized.title), DETAIL_CACHE_MS, true); } catch (_) { /* Animasu remains the source of truth when AniList is unavailable. */ }
+    response.json({ data: { ...normalized, anilist }, provider: detail.sourceProvider || provider, stale: isStale(key), anilistAvailable: Boolean(anilist) });
   } catch (error) {
     const fallback = fallbackDetailFromDaily(request.params.slug);
     if (fallback) return response.json({ data: fallback, provider: "local-snapshot", stale: true, warning: `Detail live tidak tersedia (${error.message}); metadata dasar dari snapshot lokal ditampilkan.` });
