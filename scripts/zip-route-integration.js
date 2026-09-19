@@ -44,6 +44,10 @@ animasu.listen(PORT, "127.0.0.1", async () => {
       assert.equal(search.body.provider, "animasu");
       assert.equal(search.body.data[0].slug, "animasu-anime");
 
+      const donghua = await json(`${base}/api/donghua`);
+      assert.equal(donghua.status, 200);
+      assert.equal(donghua.body.contentType, "donghua");
+
       const detailResponse = await json(`${base}/api/anime/animasu-anime?provider=external&sourceUrl=http://127.0.0.1:4394/blocked`);
       assert.equal(detailResponse.status, 200);
       assert.equal(detailResponse.body.provider, "animasu");
@@ -57,7 +61,7 @@ animasu.listen(PORT, "127.0.0.1", async () => {
       const health = await json(`${base}/api/health`);
       assert.deepEqual(health.body.sources.map((source) => source.id), ["animasu", "yaoi"]);
       assert.equal(requests.some((path) => path.includes("blocked")), false);
-      console.log(JSON.stringify({ mode: "animasu + yaoi only", daily: "ok", search: "ok", detail: "ok", streams: "ok", sourceIsolation: "ok", requestCount: requests.length }, null, 2));
+      console.log(JSON.stringify({ mode: "animasu + yaoi only", daily: "ok", search: "ok", donghua: "ok", detail: "ok", streams: "ok", sourceIsolation: "ok", requestCount: requests.length }, null, 2));
     } finally {
       application.close(() => animasu.close());
     }

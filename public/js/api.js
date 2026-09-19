@@ -25,6 +25,7 @@ export const api = {
   health: () => request("/api/health"),
   daily: () => request("/api/daily"),
   trending: () => request("/api/trending"),
+  donghua: (query = "") => request(`/api/donghua?search=${encodeURIComponent(String(query || "").trim())}`),
   genres: () => request("/api/genres"),
   cancelCatalog() { activeCatalogController?.abort(); activeCatalogController = null; },
   catalog(query, genres = [], genreMode = "or") {

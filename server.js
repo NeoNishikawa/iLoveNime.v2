@@ -687,7 +687,25 @@ app.get("/api/trending", apiRateLimit, async (_, response) => {
     response.status(503).json({ data: [], slides: [], total: 0, error: `Trending belum tersedia: ${error.message}` });
   }
 });
-
+app.get("/api/donghua", apiRateLimit, async (request, response) => {
+  const search = String(request.query.search || "").trim().slice(0, 100);
+  const key = `donghua:${normalizeSearchText(search)}`;
+  try {
+    const result = await cached(key, async () => {
+      const [daily, catalog] = await Promise.allSettled([
+        dailyWithSources(),
+        collectCatalog(search || "", "donghua", undefined, "animasu"),
+      ]);
+      const combined = [
+        ...(daily.status === "fulfilled" ? daily.value.data : []),
+        ...(catalog.status === "fulfilled" ? catalog.value.data : []),
+      ];
+      const data = uniqueBySlug(combined.filter((item) => /donghua|china|chinese|manhua|cultivation|xianxia|wuxia/i.test(`${item.title} ${item.type || ""} ${item.genre || ""}`))).map((item) => ({ ...item, contentType: "donghua", sourceProvider: "animasu + yaoi" }));
+      return { data, provider: "animasu + yaoi" };
+    }, DAILY_CACHE_MS, true);
+    response.json({ data: result.data || [], slides: slices(result.data || []), total: result.data?.length || 0, provider: result.provider, contentType: "donghua", stale: isStale(key) });
+  } catch (error) { response.status(503).json({ data: [], slides: [], total: 0, contentType: "donghua", error: `Donghua belum tersedia: ${error.message}` }); }
+});
 app.get("/api/genres", apiRateLimit, async (_, response) => {
   try {
     const key = "genres";
