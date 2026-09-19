@@ -228,17 +228,24 @@ async function dailyWithSources() {
 }
 
 async function trendingWithSources() {
-  const daily = await cached(`daily:${todayKey()}`, dailyWithSources, DAILY_CACHE_MS, true);
-  const candidates = (daily?.data || []).slice(0, 20);
+  let candidates = [];
+  try {
+    const { result } = await sourceRequest("/", { params: { urutan: "views", sort: "views" }, headers: SOURCE_HEADERS, timeout: REQUEST_TIMEOUT_MS, validateStatus: (status) => status >= 200 && status < 300 });
+    candidates = parseAnimeCards(result.data).slice(0, 20).map((item) => titleAliasRecord({ ...item, sourceProvider: "animasu" }));
+  } catch (_) { /* use the daily fallback below when the provider has no popular route */ }
+  if (!candidates.length) {
+    const daily = await cached(`daily:${todayKey()}`, dailyWithSources, DAILY_CACHE_MS, true);
+    candidates = (daily?.data || []).slice(0, 20);
+  }
   const rated = await Promise.allSettled(candidates.map(async (anime) => {
     const detail = await cached(`detail:animasu:${anime.slug}`, () => fetchAnimeDetail(anime.slug), DETAIL_CACHE_MS, true);
     return { ...anime, rating: Number(detail?.rating) || 0, viewers: Number(detail?.viewers) || 0, type: detail?.type || anime.type, episode: detail?.episode || anime.episode, sourceProvider: "animasu" };
   }));
-  const candidatesWithData = rated.filter((result) => result.status === "fulfilled" && result.value.rating > 0).map((result) => result.value);
+  const candidatesWithData = rated.filter((result) => result.status === "fulfilled").map((result) => result.value);
   const maxViewers = Math.max(...candidatesWithData.map((anime) => anime.viewers), 1);
   const data = candidatesWithData.map((anime) => ({ ...anime, trendScore: (anime.rating / 10) * 0.7 + (anime.viewers / maxViewers) * 0.3 })).sort((a, b) => b.trendScore - a.trendScore || b.rating - a.rating || a.title.localeCompare(b.title)).slice(0, 10);
-  if (!data.length) throw new Error("Belum ada rating anime yang dapat dibaca dari source.");
-  return { data, provider: "animasu" };
+  if (!data.length) throw new Error("Source belum mengembalikan data trending.");
+  return { data, provider: "animasu", source: "popular-catalog" };
 }
 
 async function genresWithSources() {
@@ -247,7 +254,11 @@ async function genresWithSources() {
     try {
       const { result } = await sourceRequestFor(source.id, "/", { headers: SOURCE_HEADERS, timeout: REQUEST_TIMEOUT_MS, validateStatus: (status) => status >= 200 && status < 300 });
       const data = parseGenreLinks(result.data, source.baseUrl);
-      if (data.length) return { data, provider: source.id };
+      if (data.length) {
+        const anilistGenres = ["Action", "Adventure", "Comedy", "Drama", "Ecchi", "Fantasy", "Horror", "Mahou Shoujo", "Mecha", "Music", "Mystery", "Psychological", "Romance", "Sci-Fi", "Slice of Life", "Sports", "Supernatural", "Thriller"].map((name) => ({ name, slug: name.toLowerCase().replace(/[^a-z0-9]+/g, "-"), source: "AniList" }));
+        const merged = [...data.map((item) => ({ ...item, source: item.source || source.id })), ...anilistGenres];
+        return { data: merged.filter((item, index, list) => list.findIndex((candidate) => candidate.slug === item.slug) === index), provider: `${source.id} + anilist` };
+      }
     } catch (error) { lastError = error; }
   }
   throw lastError || new Error("Tidak ada source anime yang mengembalikan genre.");
@@ -692,15 +703,15 @@ app.get("/api/donghua", apiRateLimit, async (request, response) => {
   const key = `donghua:${normalizeSearchText(search)}`;
   try {
     const result = await cached(key, async () => {
-      const [daily, catalog] = await Promise.allSettled([
-        dailyWithSources(),
-        collectCatalog(search || "", "donghua", undefined, "animasu"),
-      ]);
-      const combined = [
-        ...(daily.status === "fulfilled" ? daily.value.data : []),
-        ...(catalog.status === "fulfilled" ? catalog.value.data : []),
-      ];
-      const data = uniqueBySlug(combined.filter((item) => /donghua|china|chinese|manhua|cultivation|xianxia|wuxia/i.test(`${item.title} ${item.type || ""} ${item.genre || ""}`))).map((item) => ({ ...item, contentType: "donghua", sourceProvider: "animasu + yaoi" }));
+      const paths = ["/genre/donghua/", "/category/donghua/", "/pencarian/"];
+      const collected = [];
+      for (const pathname of paths) {
+        try {
+          const { result } = await sourceRequest(pathname, { params: { s: search, urutan: "update", sort: "update", "genre[]": ["donghua"] }, headers: SOURCE_HEADERS, timeout: REQUEST_TIMEOUT_MS, validateStatus: (status) => status >= 200 && status < 300 });
+          collected.push(...parseAnimeCards(result.data));
+        } catch (_) { /* try the next source route */ }
+      }
+      const data = uniqueBySlug(collected.filter((item) => /donghua|china|chinese|manhua|cultivation|xianxia|wuxia/i.test(`${item.title} ${item.type || ""} ${item.genre || ""}`))).map((item) => ({ ...item, contentType: "donghua", sourceProvider: "animasu + yaoi" }));
       return { data, provider: "animasu + yaoi" };
     }, DAILY_CACHE_MS, true);
     response.json({ data: result.data || [], slides: slices(result.data || []), total: result.data?.length || 0, provider: result.provider, contentType: "donghua", stale: isStale(key) });

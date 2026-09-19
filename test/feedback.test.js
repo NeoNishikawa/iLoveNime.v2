@@ -15,5 +15,5 @@ test("halaman feedback terpisah memiliki field dan batas upload yang benar", () 
 
 test("main navigation points to the separate feedback page", () => {
   const html = fs.readFileSync(path.join(__dirname, "../public/index.html"), "utf8");
-  assert.match(html, /href="\/feedback\.html"[^>]*>Kritik dan saran</);
+  assert.match(html, /tally\.so\/r\/7RAZd2/);
 });
