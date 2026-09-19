@@ -23,6 +23,7 @@ process.env.ANIMASU_BASE_URL = baseUrl;
 process.env.REQUEST_TIMEOUT_MS = "1000";
 process.env.DAILY_CACHE_MS = "1";
 process.env.MAX_SEARCH_PAGES = "2";
+process.env.MAINTENANCE_MODE = "true";
 
 animasu.listen(PORT, "127.0.0.1", async () => {
   const { app } = require("../server");
